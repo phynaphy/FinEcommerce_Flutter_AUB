@@ -14,8 +14,17 @@ class _TestScreenState extends State<TestScreen> {
       appBar: AppBar(title: Text("First Screen"),),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start
-        ,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 100,
+            height: 100,
+            color: Colors.red,
+          )
+        ],
+
+       
+        
       ),
     );
   }
