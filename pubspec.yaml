@@ -1,6 +1,7 @@
 name: flutter_application_ecommerce
 description: "A new Flutter project."
 publish_to: 'none'
+
 version: 0.1.0+1
 
 environment:
@@ -10,6 +11,9 @@ dependencies:
   flutter:
     sdk: flutter
 
+  get: ^4.7.3
+  google_fonts: ^6.3.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -17,3 +21,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  # assets:
+  #   - assets/images/
+  #   - assets/icons/
