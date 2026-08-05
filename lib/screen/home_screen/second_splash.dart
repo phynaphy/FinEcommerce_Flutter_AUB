@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_ecommerce/color/Premium_fintech_color.dart';
+import 'package:flutter_application_ecommerce/screen/Textfield/custom_textfield.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
 
 class SecondSplash extends StatefulWidget {
    SecondSplash({super.key});
@@ -205,7 +208,10 @@ class _SecondSplashState extends State<SecondSplash>
                           width: double.infinity,
                           height: 50,
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Get.offNamed('/login');
+                              
+                            },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: PremiumFintechColor.primaryColor,
                               shape: RoundedRectangleBorder(
