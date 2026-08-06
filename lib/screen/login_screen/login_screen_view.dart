@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_ecommerce/color/Premium_fintech_color.dart';
 import 'package:flutter_application_ecommerce/screen/Textfield/custom_textfield.dart';
 import 'package:flutter_application_ecommerce/screen/login_screen/login_screen_controller.dart';
+import 'package:flutter_application_ecommerce/screen/register_screen/register_screen_view.dart';
 import 'package:get/route_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -171,7 +172,10 @@ class _LoginScreenViewState extends State<LoginScreenView> {
                         width: double.infinity,
                         height: 48,
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () async{
+                            await controller.login();
+
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: PremiumFintechColor.primaryColor,
                             foregroundColor: Colors.white,
@@ -201,55 +205,7 @@ class _LoginScreenViewState extends State<LoginScreenView> {
                         ),
                       ),
                       SizedBox(height: 25),
-                      // Row(
-                      //   children:
-                      // [
-                      //     Expanded(child: Divider(color: Color(0xFFE2E8F0))),
-                      //     Padding(
-                      //       padding: EdgeInsets.symmetric(horizontal: 12),
-                      //       child: Text(
-                      //         "OR CONTINUE WITH",
-                      //         style: TextStyle(
-                      //           fontSize: 10,
-                      //           fontWeight: FontWeight.bold,
-                      //           color: Color(0xFF94A3B8),
-                      //           letterSpacing: 0.5,
-                      //         ),
-                      //       ),
-                      //     ),
-                      //     Expanded(child: Divider(color: Color(0xFFE2E8F0))),
-                      //   ],
-                      // ),
-                      // SizedBox(height: 25),
-                      // Row(
-                      //   mainAxisAlignment: MainAxisAlignment.start,
-                      //   crossAxisAlignment: CrossAxisAlignment.start,
-                      //   children: [
-                      //     ElevatedButton(
-                      //       onPressed: () {},style: ElevatedButton.styleFrom(
-
-                      //       ),
-                      //       child: Row(
-                      //         mainAxisAlignment: MainAxisAlignment.start,
-                      //         crossAxisAlignment: CrossAxisAlignment.start,
-                      //         children: [
-                      //           Text(
-                      //             "GOOGLE",
-                      //             style: GoogleFonts.spaceGrotesk(
-                      //               fontSize: 25,
-                      //               color: Colors.black,
-                      //               fontWeight: FontWeight.normal,
-                      //             ),
-                      //           ),
-                      //           ImageIcon(
-                      //             AssetImage("assets/icons/google.png"),
-                      //             size: 20,
-                      //           ),
-                      //         ],
-                      //       ),
-                      //     ),
-                      //   ],
-                      // ),
+                    
                       Row(
                         children: [
                           Expanded(
@@ -300,7 +256,9 @@ class _LoginScreenViewState extends State<LoginScreenView> {
                             style: TextStyle(fontSize: 15, color: Colors.black),
                           ),
                           GestureDetector(
-                            onTap: () {},
+                            onTap: () {
+    Get.off(() => const RegisterScreenView());
+                            },
                             child: Text(
                               "Register now",
                               style: TextStyle(

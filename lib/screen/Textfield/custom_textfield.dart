@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_ecommerce/color/Premium_fintech_color.dart';
 
 // --- MAIN LOGIN SCREEN ---
-class LoginScreenView extends StatefulWidget {
-  const LoginScreenView({super.key});
+class LoginScreenView2 extends StatefulWidget {
+  const LoginScreenView2({super.key});
 
   @override
-  State<LoginScreenView> createState() => _LoginScreenViewState();
+  State<LoginScreenView2> createState() => _LoginScreenView2State();
 }
 
-class _LoginScreenViewState extends State<LoginScreenView> {
+class _LoginScreenView2State extends State<LoginScreenView2> {
   // State variables for controllers stay here!
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -71,6 +71,8 @@ class CustomTextField extends StatelessWidget {
   final bool isObscure;
   final Widget? suffixIcon; // Fixed naming to lower camelCase
   final TextInputType keyboardType;
+  final Widget? prefixIcon;
+  
 
   const CustomTextField({
     super.key,
@@ -79,11 +81,13 @@ class CustomTextField extends StatelessWidget {
     this.isObscure = false,
     this.suffixIcon,
     this.keyboardType = TextInputType.text,
+    this.prefixIcon,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      autofocus: false,
       controller: controller,
       obscureText: isObscure,
       keyboardType: keyboardType,
