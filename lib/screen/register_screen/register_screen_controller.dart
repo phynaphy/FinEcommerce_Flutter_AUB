@@ -1,44 +1,47 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:flutter_application_ecommerce/api/auth_service.dart';
 
-class RegisterScreenController extends GetxController {
-  
-  // TODO: Implement LoginController
-    final TextEditingController fullnameController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController emailController= TextEditingController();
-  final TextEditingController phoneNumberController = TextEditingController();
-  final TextEditingController comfirmpassController = TextEditingController();
-   bool isObscure = true;
+import 'package:flutter_application_ecommerce/api/request_service/register_request.dart';
 
+class RegisterScreenController {
+  final fullnameController = TextEditingController();
+  final emailController = TextEditingController();
+  final phoneNumberController = TextEditingController();
+  final passwordController = TextEditingController();
+  final comfirmpassController = TextEditingController();
 
-  final count = 0.obs;
-     @override
+  bool isObscure = true;
+
+  final AuthService authService = AuthService();
+
+  Future<void> register() async {
+
+    final request = RegisterRequest(
+      username: fullnameController.text.trim(),
+      email: emailController.text.trim(),
+      fullName: fullnameController.text.trim(),
+      password: passwordController.text,
+      confirmPassword: comfirmpassController.text,
+    );
+
+    final response = await authService.register(request);
+
+    print("Status Code: ${response.statusCode}");
+    print("Response: ${response.body}");
+
+    if (response.statusCode >= 200 &&
+        response.statusCode < 300) {
+      print("Registration successful!");
+    } else {
+      print("Registration failed!");
+    }
+  }
+
   void dispose() {
     fullnameController.dispose();
     emailController.dispose();
-    phoneNumberController .dispose();
+    phoneNumberController.dispose();
     passwordController.dispose();
     comfirmpassController.dispose();
-    
-
-    super.dispose();
   }
-
-  @override
-  void onInit() {
-    super.onInit();
-  }
-
-  @override
-  void onReady() {
-    super.onReady();
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
-  }
-
-  void increment() => count.value++;
 }

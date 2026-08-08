@@ -6,7 +6,7 @@ class HomescreenBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<HomescreenBinding>(
-      () => LoginScreenController(),
+      () => HomescreenBinding(),
     );
   }
 }

@@ -117,10 +117,10 @@ class _LoginScreenViewState extends State<LoginScreenView> {
                       SizedBox(height: 15),
                       CustomTextField(
                         controller: controller.emailController,
-                        hintText: "Email Adress",
+                        hintText: "UserName",
                         keyboardType: TextInputType.emailAddress,
                         suffixIcon: Icon(
-                          Icons.email_outlined,
+                          Icons.person,
                           color: PremiumFintechColor.primaryColor,
                         ),
                       ),

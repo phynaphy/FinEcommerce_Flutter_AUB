@@ -37,7 +37,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_ecommerce/api/auth_service.dart';
-import 'package:flutter_application_ecommerce/api/login_request.dart';
+import 'package:flutter_application_ecommerce/api/request_service/login_request.dart';
+
 import 'package:get/get.dart';
 
 

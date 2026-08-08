@@ -4,7 +4,7 @@ class PremiumFintechColor {
   static const Color primaryColor = Color(0xFF003D91);
     static const Color secondary = Color(0xFF1976D2);
 
-  // Secondary Teal
+  // Secondary Tealp
   static const Color tertiary = Color(0xFF00BFA5);
 
   // Background
