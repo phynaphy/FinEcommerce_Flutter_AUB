@@ -52,8 +52,11 @@ class _ProfileScreenViewState extends State<ProfileScreenView> {
               ],
             ),
             child: IconButton(
-              icon: const Icon(Icons.notifications_none_rounded,
-                  color: Color(0xFF0F172A), size: 22),
+              icon: const Icon(
+                Icons.notifications_none_rounded,
+                color: Color(0xFF0F172A),
+                size: 22,
+              ),
               onPressed: () {},
             ),
           ),
@@ -76,7 +79,9 @@ class _ProfileScreenViewState extends State<ProfileScreenView> {
                 icon: Icons.person_outline_rounded,
                 title: 'Personal Information',
                 subtitle: 'Update your details and personal data',
-                onTap: () {},
+                onTap: () {
+                  Get.offNamed('/profile-information');
+                },
               ),
               _buildCustomDivider(),
               _buildMenuTile(
@@ -115,18 +120,20 @@ class _ProfileScreenViewState extends State<ProfileScreenView> {
                 title: 'Change Password',
                 subtitle: 'Last updated 3 months ago',
                 onTap: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ChangePasswordView(),
-      ),
-    );
-  },
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChangePasswordView(),
+                    ),
+                  );
+                },
               ),
               _buildCustomDivider(),
               ListTile(
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 4,
+                ),
                 leading: _buildIconBox(Icons.fingerprint_rounded),
                 title: const Text(
                   'Biometric Login',
@@ -171,10 +178,7 @@ class _ProfileScreenViewState extends State<ProfileScreenView> {
             const SizedBox(height: 30),
 
             // 6. Modern Red Gradient Log Out Button
-            _buildLogOutButton(
-             
-              
-            ),
+            _buildLogOutButton(),
             const SizedBox(height: 28),
           ],
         ),
@@ -200,10 +204,14 @@ class _ProfileScreenViewState extends State<ProfileScreenView> {
           elevation: 0,
           selectedItemColor: const Color(0xFF0369A1),
           unselectedItemColor: const Color(0xFF94A3B8),
-          selectedLabelStyle:
-              const TextStyle(fontWeight: FontWeight.w600, fontSize: 11),
-          unselectedLabelStyle:
-              const TextStyle(fontWeight: FontWeight.w500, fontSize: 11),
+          selectedLabelStyle: const TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 11,
+          ),
+          unselectedLabelStyle: const TextStyle(
+            fontWeight: FontWeight.w500,
+            fontSize: 11,
+          ),
           items: [
             const BottomNavigationBarItem(
               icon: Icon(Icons.home_outlined),
@@ -241,8 +249,11 @@ class _ProfileScreenViewState extends State<ProfileScreenView> {
                     ),
                   ],
                 ),
-                child: const Icon(Icons.person_rounded,
-                    color: Colors.white, size: 18),
+                child: const Icon(
+                  Icons.person_rounded,
+                  color: Colors.white,
+                  size: 18,
+                ),
               ),
               label: 'Profile',
             ),
@@ -286,7 +297,7 @@ class _ProfileScreenViewState extends State<ProfileScreenView> {
                   gradient: LinearGradient(
                     colors: [
                       const Color(0xFF38BDF8),
-                      Colors.white.withOpacity(0.2)
+                      Colors.white.withOpacity(0.2),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -302,8 +313,9 @@ class _ProfileScreenViewState extends State<ProfileScreenView> {
               ),
               const CircleAvatar(
                 radius: 44,
-                backgroundImage:
-                    NetworkImage('https://i.pravatar.cc/150?img=47'),
+                backgroundImage: NetworkImage(
+                  'https://i.pravatar.cc/150?img=47',
+                ),
               ),
               Positioned(
                 bottom: 2,
@@ -485,7 +497,7 @@ class _ProfileScreenViewState extends State<ProfileScreenView> {
         child: InkWell(
           borderRadius: BorderRadius.circular(30),
           onTap: () {
-            Get.offAll(() =>  LoginScreenView());
+            Get.offAll(() => LoginScreenView());
           },
           child: const Row(
             mainAxisAlignment: MainAxisAlignment.center,

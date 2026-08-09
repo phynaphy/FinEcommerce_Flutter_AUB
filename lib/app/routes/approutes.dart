@@ -5,5 +5,7 @@ class AppRoutes {
   static const String register = '/register';
   static const String homescreen = '/homescreen';
   static const String profile = '/profile';
+  static const String profileinformation = '/profile-information';
+
   
 }
