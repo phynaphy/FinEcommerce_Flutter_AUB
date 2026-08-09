@@ -21,7 +21,7 @@ class AppPages {
     ),
     GetPage(name: AppRoutes.login,page: () => LoginScreenView(),),
     GetPage(name: AppRoutes.register, page: ()=>RegisterScreenView()),
-    GetPage(name: AppRoutes.homescreen, page:()=>HomescreenView()),
+    GetPage(name: AppRoutes.homescreen, page:()=>HomeScreenView()),
     GetPage(name: AppRoutes.profile, page: ()=>ProfileScreenView())
   ];
 }

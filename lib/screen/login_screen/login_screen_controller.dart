@@ -57,7 +57,7 @@ class LoginScreenController extends GetxController {
         print(data);
 
         // 2. NAVIGATE TO HOME SCREEN
-        Get.offAll(() => const HomescreenView());
+        Get.offAll(() => const HomeScreenView());
 
       } else {
         Get.snackbar(

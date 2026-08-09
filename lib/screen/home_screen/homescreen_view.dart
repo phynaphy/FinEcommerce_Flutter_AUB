@@ -1,56 +1,47 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_ecommerce/screen/profile_screen/profile_screen_view.dart';
+import 'package:flutter_application_ecommerce/screen/home_screen/categories_section.dart';
+import 'package:flutter_application_ecommerce/screen/home_screen/home_app_bar.dart';
+import 'package:flutter_application_ecommerce/screen/home_screen/home_banner.dart';
+import 'package:flutter_application_ecommerce/screen/home_screen/home_button_nav.dart';
+import 'package:flutter_application_ecommerce/screen/home_screen/recommendedProducts.dart';
 import 'package:google_fonts/google_fonts.dart';
-// Replace this with your actual path to ProfileScreenView:
 
-
-class HomescreenView extends StatefulWidget {
-  const HomescreenView({super.key});
+class HomeScreenView extends StatefulWidget {
+  const HomeScreenView({super.key});
 
   @override
-  State<HomescreenView> createState() => _HomescreenViewState();
+  State<HomeScreenView> createState() => _HomeScreenViewState();
 }
 
-class _HomescreenViewState extends State<HomescreenView> {
+class _HomeScreenViewState extends State<HomeScreenView> {
+  int _selectedIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Welcome into FIN-ECOMMERCE screen",
-          style: GoogleFonts.spaceGrotesk(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
+      backgroundColor: const Color(0xFFF8FAFC),
+      appBar: const HomeAppBar(),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: const [
+            HomeBanners(),
+            SizedBox(height: 24),
+            CategoriesSection(),
+            SizedBox(height: 24),
+            RecommendedProducts(),
+            SizedBox(height: 20),
+          ],
         ),
       ),
-      body: Center(
-        child: ElevatedButton.icon(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF003D91),
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ProfileScreenView(),
-              ),
-            );
-          },
-          icon: const Icon(Icons.person_outline_rounded, color: Colors.white),
-          label: Text(
-            'Go to Profile',
-            style: GoogleFonts.spaceGrotesk(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-        ),
+      bottomNavigationBar: HomeBottomNav(
+        currentIndex: _selectedIndex,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
       ),
     );
   }
