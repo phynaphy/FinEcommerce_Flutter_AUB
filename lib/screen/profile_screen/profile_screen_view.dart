@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_ecommerce/screen/change&forget_password/change_password_view.dart';
+import 'package:flutter_application_ecommerce/screen/change&forget_password/email_input_view.dart';
 import 'package:flutter_application_ecommerce/screen/login_screen/login_screen_view.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
@@ -118,7 +119,7 @@ class _ProfileScreenViewState extends State<ProfileScreenView> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ChangePasswordView(),
+        builder: (context) => EmailInputView(),
       ),
     );
   },
