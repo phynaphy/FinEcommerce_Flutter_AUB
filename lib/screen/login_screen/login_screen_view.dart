@@ -14,6 +14,7 @@ class LoginScreenView extends StatefulWidget {
 }
 
 class _LoginScreenViewState extends State<LoginScreenView> {
+  
   final LoginScreenController controller = LoginScreenController();
   @override
   void dispose() {
@@ -117,10 +118,10 @@ class _LoginScreenViewState extends State<LoginScreenView> {
                       SizedBox(height: 15),
                       CustomTextField(
                         controller: controller.emailController,
-                        hintText: "Email Adress",
+                        hintText: "UserName",
                         keyboardType: TextInputType.emailAddress,
                         suffixIcon: Icon(
-                          Icons.email_outlined,
+                          Icons.person,
                           color: PremiumFintechColor.primaryColor,
                         ),
                       ),
@@ -129,17 +130,17 @@ class _LoginScreenViewState extends State<LoginScreenView> {
                         controller: controller
                             .passwordController, // Fixed controller binding
                         hintText: "Password",
-                        isObscure: controller.isObsecure,
+                        isObscure: controller.isObsecure.value,
                         keyboardType: TextInputType.visiblePassword,
                         suffixIcon: GestureDetector(
                           onTap: () {
                             setState(() {
-                              controller.isObsecure = !controller.isObsecure;
+                              controller.isObsecure.value = !controller.isObsecure.value;
                             });
                           },
 
                           child: Icon(
-                            controller.isObsecure
+                            controller.isObsecure.value
                                 ? Icons.visibility_outlined
                                 : Icons.visibility_off_outlined,
                             color: PremiumFintechColor.primaryColor,
