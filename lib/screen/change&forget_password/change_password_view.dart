@@ -81,69 +81,70 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              
               // Institutional Trust Banner Card
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [primaryBankingBlue, Color(0xFF002866)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: primaryBankingBlue.withOpacity(0.25),
-                      blurRadius: 15,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.12),
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                            color: Colors.white.withOpacity(0.2), width: 1),
-                      ),
-                      child: const Icon(
-                        Icons.mark_email_read_outlined,
-                        color: Colors.white,
-                        size: 26,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    const Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Check Your Email',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            'We sent a 6-digit OTP code to your registered email address.',
-                            style: TextStyle(
-                              color: Color(0xFF93C5FD),
-                              fontSize: 12,
-                              height: 1.3,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              // Container(
+              //   width: double.infinity,
+              //   padding: const EdgeInsets.all(20),
+              //   decoration: BoxDecoration(
+              //     gradient: const LinearGradient(
+              //       colors: [primaryBankingBlue, Color(0xFF002866)],
+              //       begin: Alignment.topLeft,
+              //       end: Alignment.bottomRight,
+              //     ),
+              //     borderRadius: BorderRadius.circular(20),
+              //     boxShadow: [
+              //       BoxShadow(
+              //         color: primaryBankingBlue.withOpacity(0.25),
+              //         blurRadius: 15,
+              //         offset: const Offset(0, 8),
+              //       ),
+              //     ],
+              //   ),
+              //   child: Row(
+              //     children: [
+              //       Container(
+              //         padding: const EdgeInsets.all(12),
+              //         decoration: BoxDecoration(
+              //           color: Colors.white.withOpacity(0.12),
+              //           shape: BoxShape.circle,
+              //           border: Border.all(
+              //               color: Colors.white.withOpacity(0.2), width: 1),
+              //         ),
+              //         child: const Icon(
+              //           Icons.mark_email_read_outlined,
+              //           color: Colors.white,
+              //           size: 26,
+              //         ),
+              //       ),
+              //       const SizedBox(width: 16),
+              //       const Expanded(
+              //         child: Column(
+              //           crossAxisAlignment: CrossAxisAlignment.start,
+              //           children: [
+              //             Text(
+              //               'Check Your Email',
+              //               style: TextStyle(
+              //                 color: Colors.white,
+              //                 fontSize: 16,
+              //                 fontWeight: FontWeight.bold,
+              //               ),
+              //             ),
+              //             SizedBox(height: 4),
+              //             Text(
+              //               'We sent a 6-digit OTP code to your registered email address.',
+              //               style: TextStyle(
+              //                 color: Color(0xFF93C5FD),
+              //                 fontSize: 12,
+              //                 height: 1.3,
+              //               ),
+              //             ),
+              //           ],
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
 
               const SizedBox(height: 28),
 
