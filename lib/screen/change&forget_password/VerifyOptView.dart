@@ -1,245 +1,4 @@
-// import 'package:flutter/material.dart';
-// import 'package:flutter_application_ecommerce/api/auth_service.dart';
-// import 'change_password_view.dart'; // Ensure correct import path
-
-// class VerifyOtpView extends StatefulWidget {
-//   final String email;
-
-//   const VerifyOtpView({
-//     super.key,
-//     required this.email,
-//   });
-
-//   @override
-//   State<VerifyOtpView> createState() => _VerifyOtpViewState();
-// }
-
-// class _VerifyOtpViewState extends State<VerifyOtpView> {
-//   final _formKey = GlobalKey<FormState>();
-//   final _otpController = TextEditingController();
-//   bool _isLoading = false;
-
-//   static const Color primaryBlue = Color(0xFF003D91);
-
-//   @override
-//   void dispose() {
-//     _otpController.dispose();
-//     super.dispose();
-//   }
-
-// void _verifyOtp() async {
-//   if (!_formKey.currentState!.validate()) return;
-
-//   setState(() => _isLoading = true);
-
-//   try {
-//    final response = await AuthService().verifyOtp(
-//   _otpController.text.trim(),
-//   widget.email,
-// );
-
-//     print("OTP Status: ${response.statusCode}");
-//     print("OTP Response: ${response.body}");
-
-//     if (!mounted) return;
-
-//     setState(() => _isLoading = false);
-
-//     if (response.statusCode == 200) {
-//       Navigator.push(
-//         context,
-//         MaterialPageRoute(
-//           builder: (context) => ChangePasswordView(
-//             email: widget.email,
-//           ),
-//         ),
-//       );
-//     } else {
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         const SnackBar(
-//           content: Text("Invalid or expired OTP"),
-//           backgroundColor: Colors.red,
-//         ),
-//       );
-//     }
-//   } catch (e) {
-//     if (!mounted) return;
-
-//     setState(() => _isLoading = false);
-
-//     ScaffoldMessenger.of(context).showSnackBar(
-//       SnackBar(
-//         content: Text("Error: $e"),
-//         backgroundColor: Colors.red,
-//       ),
-//     );
-//   }
-// }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: const Color(0xFFF8FAFC),
-//       appBar: AppBar(
-//         backgroundColor: Colors.transparent,
-//         elevation: 0,
-//         leading: IconButton(
-//           icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF0F172A), size: 20),
-//           onPressed: () => Navigator.pop(context),
-//         ),
-//         title: const Text(
-//           'OTP Verification',
-//           style: TextStyle(color: Color(0xFF0F172A), fontWeight: FontWeight.bold, fontSize: 18),
-//         ),
-//         centerTitle: true,
-//       ),
-//       body: SafeArea(
-//         child: Padding(
-//           padding: const EdgeInsets.all(20.0),
-//           child: Form(
-//             key: _formKey,
-//             child: Column(
-//               crossAxisAlignment: CrossAxisAlignment.start,
-//               children: [
-//                 // Email Banner Card
-//                 Container(
-//                   width: double.infinity,
-//                   padding: const EdgeInsets.all(20),
-//                   decoration: BoxDecoration(
-//                     gradient: const LinearGradient(
-//                       colors: [primaryBlue, Color(0xFF002866)],
-//                       begin: Alignment.topLeft,
-//                       end: Alignment.bottomRight,
-//                     ),
-//                     borderRadius: BorderRadius.circular(20),
-//                     boxShadow: [
-//                       BoxShadow(
-//                         color: primaryBlue.withOpacity(0.25),
-//                         blurRadius: 15,
-//                         offset: const Offset(0, 8),
-//                       ),
-//                     ],
-//                   ),
-//                   child: Row(
-//                     children: [
-//                       Container(
-//                         padding: const EdgeInsets.all(12),
-//                         decoration: BoxDecoration(
-//                           color: Colors.white.withOpacity(0.12),
-//                           shape: BoxShape.circle,
-//                           border: Border.all(color: Colors.white.withOpacity(0.2), width: 1),
-//                         ),
-//                         child: const Icon(Icons.mark_email_read_outlined, color: Colors.white, size: 26),
-//                       ),
-//                       const SizedBox(width: 16),
-//                       Expanded(
-//                         child: Column(
-//                           crossAxisAlignment: CrossAxisAlignment.start,
-//                           children: [
-//                             const Text(
-//                               'Code Sent',
-//                               style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-//                             ),
-//                             const SizedBox(height: 4),
-//                             Text(
-//                               'We sent a 6-digit code to ${widget.email}.',
-//                               style: const TextStyle(color: Color(0xFF93C5FD), fontSize: 12, height: 1.3),
-//                             ),
-//                           ],
-//                         ),
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//                 const SizedBox(height: 28),
-//                 const Text(
-//                   'Enter Verification Code',
-//                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Color(0xFF0F172A)),
-//                 ),
-//                 const SizedBox(height: 8),
-//                 TextFormField(
-//                   controller: _otpController,
-//                   keyboardType: TextInputType.number,
-//                   maxLength: 6,
-//                   style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 6, color: Color(0xFF0F172A)),
-//                   decoration: InputDecoration(
-//                     counterText: '',
-//                     hintText: '000000',
-//                     hintStyle: const TextStyle(color: Color(0xFF94A3B8), fontSize: 16, letterSpacing: 6, fontWeight: FontWeight.normal),
-//                     filled: true,
-//                     fillColor: Colors.white,
-//                     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-//                     prefixIcon: const Icon(Icons.pin_outlined, color: Color(0xFF64748B), size: 20),
-//                     enabledBorder: OutlineInputBorder(
-//                       borderRadius: BorderRadius.circular(14),
-//                       borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
-//                     ),
-//                     focusedBorder: OutlineInputBorder(
-//                       borderRadius: BorderRadius.circular(14),
-//                       borderSide: const BorderSide(color: primaryBlue, width: 2),
-//                     ),
-//                     errorBorder: OutlineInputBorder(
-//                       borderRadius: BorderRadius.circular(14),
-//                       borderSide: const BorderSide(color: Color(0xFFEF4444)),
-//                     ),
-//                     focusedErrorBorder: OutlineInputBorder(
-//                       borderRadius: BorderRadius.circular(14),
-//                       borderSide: const BorderSide(color: Color(0xFFEF4444), width: 2),
-//                     ),
-//                   ),
-//                   validator: (val) {
-//                     if (val == null || val.isEmpty) return 'Please enter the code';
-//                     if (val.length < 6) return 'Code must be 6 digits';
-//                     return null;
-//                   },
-//                 ),
-//                 Align(
-//                   alignment: Alignment.centerRight,
-//                   child: TextButton(
-//                     onPressed: () {
-//                       ScaffoldMessenger.of(context).showSnackBar(
-//                         SnackBar(content: Text('A new OTP code has been sent to ${widget.email}')),
-//                       );
-//                     },
-//                     child: const Text(
-//                       "Didn't receive code? Resend",
-//                       style: TextStyle(color: primaryBlue, fontWeight: FontWeight.w600, fontSize: 13),
-//                     ),
-//                   ),
-//                 ),
-//                 const Spacer(),
-//                 SizedBox(
-//                   width: double.infinity,
-//                   height: 52,
-//                   child: ElevatedButton(
-//                     style: ElevatedButton.styleFrom(
-//                       backgroundColor: primaryBlue,
-//                       elevation: 4,
-//                       shadowColor: primaryBlue.withOpacity(0.35),
-//                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-//                     ),
-//                     onPressed: _isLoading ? null : _verifyOtp,
-//                     child: _isLoading
-//                         ? const SizedBox(
-//                             height: 20,
-//                             width: 20,
-//                             child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-//                           )
-//                         : const Text(
-//                             'Verify & Continue',
-//                             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
-//                           ),
-//                   ),
-//                 ),
-//                 const SizedBox(height: 16),
-//               ],
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_ecommerce/api/auth_service.dart';
@@ -254,16 +13,22 @@ class VerifyOtpView extends StatefulWidget {
   });
 
   @override
-  State<VerifyOtpView> createState() => _VerifyOtpViewState();
+  State<VerifyOtpView> createState() =>
+      _VerifyOtpViewState();
 }
 
-class _VerifyOtpViewState extends State<VerifyOtpView> {
-  final _formKey = GlobalKey<FormState>();
-  final _otpController = TextEditingController();
+class _VerifyOtpViewState
+    extends State<VerifyOtpView> {
+  final _formKey =
+      GlobalKey<FormState>();
+
+  final _otpController =
+      TextEditingController();
 
   bool _isLoading = false;
 
-  static const Color primaryBlue = Color(0xFF003D91);
+  static const Color primaryBlue =
+      Color(0xFF003D91);
 
   @override
   void dispose() {
@@ -271,9 +36,10 @@ class _VerifyOtpViewState extends State<VerifyOtpView> {
     super.dispose();
   }
 
-  // =========================
+  // ============================================================
   // VERIFY OTP
-  // =========================
+  // ============================================================
+
   Future<void> _verifyOtp() async {
     if (!_formKey.currentState!.validate()) {
       return;
@@ -284,23 +50,31 @@ class _VerifyOtpViewState extends State<VerifyOtpView> {
     });
 
     try {
-      final otp = _otpController.text.trim();
-      final email = widget.email.trim();
+      final otp =
+          _otpController.text.trim();
 
-      // Debug information
-      print("================================");
+      final email =
+          widget.email.trim();
+
+      print("=================================");
       print("VERIFY OTP");
-      print("Email: $email");
+      print("EMAIL: $email");
       print("OTP: $otp");
-      print("================================");
+      print("=================================");
 
-      final response = await AuthService().verifyOtp(
+      final response =
+          await AuthService().verifyOtp(
         otp,
         email,
       );
 
-      print("OTP Status Code: ${response.statusCode}");
-      print("OTP Response: ${response.body}");
+      print(
+        "STATUS: ${response.statusCode}",
+      );
+
+      print(
+        "BODY: ${response.body}",
+      );
 
       if (!mounted) return;
 
@@ -308,46 +82,180 @@ class _VerifyOtpViewState extends State<VerifyOtpView> {
         _isLoading = false;
       });
 
-      // =========================
+      // ========================================================
       // SUCCESS
-      // =========================
-      if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("OTP verified successfully"),
-            backgroundColor: Colors.green,
-          ),
-        );
+      // ========================================================
 
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ChangePasswordView(
-              email: widget.email,
+      if (response.statusCode == 200 ||
+          response.statusCode == 201) {
+        try {
+          final data =
+              jsonDecode(response.body);
+
+          print(
+            "OTP RESPONSE DATA: $data",
+          );
+
+          // ====================================================
+          // GET ID FROM BACKEND
+          // ====================================================
+
+          int? id;
+
+          if (data is Map<String, dynamic>) {
+            // Example:
+            // {"id": 12}
+
+            if (data["id"] != null) {
+              id = int.tryParse(
+                data["id"].toString(),
+              );
+            }
+
+            // In case backend uses userId
+            if (id == null &&
+                data["userId"] != null) {
+              id = int.tryParse(
+                data["userId"].toString(),
+              );
+            }
+
+            // In case backend returns:
+            // {"data": {"id": 12}}
+
+            if (id == null &&
+                data["data"] is Map) {
+              final nested =
+                  data["data"]
+                      as Map;
+
+              if (nested["id"] != null) {
+                id = int.tryParse(
+                  nested["id"].toString(),
+                );
+              }
+            }
+
+            // In case backend returns:
+            // {"user": {"id": 12}}
+
+            if (id == null &&
+                data["user"] is Map) {
+              final user =
+                  data["user"] as Map;
+
+              if (user["id"] != null) {
+                id = int.tryParse(
+                  user["id"].toString(),
+                );
+              }
+            }
+          }
+
+          // ====================================================
+          // ID NOT FOUND
+          // ====================================================
+
+          if (id == null) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(
+              const SnackBar(
+                content: Text(
+                  "OTP verified, but user ID was not returned by the server.",
+                ),
+                backgroundColor:
+                    Colors.red,
+              ),
+            );
+
+            print(
+              "❌ ID NOT FOUND IN RESPONSE",
+            );
+
+            return;
+          }
+
+          print(
+            "=================================",
+          );
+          print(
+            "OTP VERIFIED SUCCESSFULLY",
+          );
+          print("USER ID: $id");
+          print(
+            "=================================",
+          );
+
+          // ====================================================
+          // GO TO CHANGE PASSWORD
+          // ====================================================
+
+          ScaffoldMessenger.of(context)
+              .showSnackBar(
+            const SnackBar(
+              content: Text(
+                "OTP verified successfully",
+              ),
+              backgroundColor:
+                  Colors.green,
             ),
-          ),
-        );
+          );
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  ChangePasswordView(
+                id: id!,
+              ),
+            ),
+          );
+        } catch (e) {
+          print(
+            "ERROR READING OTP RESPONSE: $e",
+          );
+
+          ScaffoldMessenger.of(context)
+              .showSnackBar(
+            SnackBar(
+              content: Text(
+                "Invalid server response: $e",
+              ),
+              backgroundColor:
+                  Colors.red,
+            ),
+          );
+        }
       }
 
-      // =========================
-      // OTP INVALID / EXPIRED
-      // =========================
+      // ========================================================
+      // INVALID OTP
+      // ========================================================
+
       else {
-        String message = "Invalid or expired OTP";
+        String message =
+            "Invalid or expired OTP";
 
         try {
-          // If backend returns JSON like:
-          // {"message":"Invalid OTP"}
-          final responseBody = response.body;
+          if (response.body.isNotEmpty) {
+            final data =
+                jsonDecode(response.body);
 
-          if (responseBody.isNotEmpty) {
-            print("Backend Error: $responseBody");
+            if (data is Map<String, dynamic>) {
+              message =
+                  data["message"]?.toString() ??
+                  data["error"]?.toString() ??
+                  message;
+            }
           }
         } catch (e) {
-          print("Could not read response: $e");
+          print(
+            "ERROR PARSING OTP ERROR: $e",
+          );
         }
 
-        ScaffoldMessenger.of(context).showSnackBar(
+        ScaffoldMessenger.of(context)
+            .showSnackBar(
           SnackBar(
             content: Text(message),
             backgroundColor: Colors.red,
@@ -361,9 +269,12 @@ class _VerifyOtpViewState extends State<VerifyOtpView> {
         _isLoading = false;
       });
 
-      print("VERIFY OTP ERROR: $e");
+      print(
+        "VERIFY OTP ERROR: $e",
+      );
 
-      ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(context)
+          .showSnackBar(
         SnackBar(
           content: Text("Error: $e"),
           backgroundColor: Colors.red,
@@ -372,23 +283,39 @@ class _VerifyOtpViewState extends State<VerifyOtpView> {
     }
   }
 
-  // =========================
+  // ============================================================
   // RESEND OTP
-  // =========================
+  // ============================================================
+
   Future<void> _resendOtp() async {
+    if (_isLoading) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
     try {
-      setState(() {
-        _isLoading = true;
-      });
+      final email =
+          widget.email.trim();
 
-      final email = widget.email.trim();
+      print(
+        "RESENDING OTP TO: $email",
+      );
 
-      print("Resending OTP to: $email");
+      final response =
+          await AuthService().resendOtp(
+        email,
+      );
 
-      final response = await AuthService().forgotPassword(email);
+      print(
+        "RESEND STATUS: "
+        "${response.statusCode}",
+      );
 
-      print("Resend OTP Status: ${response.statusCode}");
-      print("Resend OTP Response: ${response.body}");
+      print(
+        "RESEND BODY: "
+        "${response.body}",
+      );
 
       if (!mounted) return;
 
@@ -398,19 +325,25 @@ class _VerifyOtpViewState extends State<VerifyOtpView> {
 
       if (response.statusCode == 200 ||
           response.statusCode == 201) {
-        ScaffoldMessenger.of(context).showSnackBar(
+        ScaffoldMessenger.of(context)
+            .showSnackBar(
           SnackBar(
             content: Text(
               "A new OTP code has been sent to $email",
             ),
-            backgroundColor: Colors.green,
+            backgroundColor:
+                Colors.green,
           ),
         );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
+        ScaffoldMessenger.of(context)
+            .showSnackBar(
           const SnackBar(
-            content: Text("Failed to resend OTP"),
-            backgroundColor: Colors.red,
+            content: Text(
+              "Failed to resend OTP",
+            ),
+            backgroundColor:
+                Colors.red,
           ),
         );
       }
@@ -421,9 +354,8 @@ class _VerifyOtpViewState extends State<VerifyOtpView> {
         _isLoading = false;
       });
 
-      print("RESEND OTP ERROR: $e");
-
-      ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(context)
+          .showSnackBar(
         SnackBar(
           content: Text("Error: $e"),
           backgroundColor: Colors.red,
@@ -432,16 +364,19 @@ class _VerifyOtpViewState extends State<VerifyOtpView> {
     }
   }
 
+  // ============================================================
+  // BUILD
+  // ============================================================
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor:
+          const Color(0xFFF8FAFC),
 
-      // =========================
-      // APP BAR
-      // =========================
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor:
+            Colors.transparent,
         elevation: 0,
 
         leading: IconButton(
@@ -450,11 +385,12 @@ class _VerifyOtpViewState extends State<VerifyOtpView> {
             color: Color(0xFF0F172A),
             size: 20,
           ),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () =>
+              Navigator.pop(context),
         ),
 
         title: const Text(
-          'OTP Verification',
+          "OTP Verification",
           style: TextStyle(
             color: Color(0xFF0F172A),
             fontWeight: FontWeight.bold,
@@ -465,103 +401,136 @@ class _VerifyOtpViewState extends State<VerifyOtpView> {
         centerTitle: true,
       ),
 
-      // =========================
-      // BODY
-      // =========================
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding:
+              const EdgeInsets.all(20),
 
           child: Form(
             key: _formKey,
 
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment:
+                  CrossAxisAlignment.start,
 
               children: [
+                // ==================================================
+                // EMAIL CARD
+                // ==================================================
 
-                // =========================
-                // EMAIL BANNER
-                // =========================
                 Container(
-                  width: double.infinity,
+                  width:
+                      double.infinity,
 
-                  padding: const EdgeInsets.all(20),
+                  padding:
+                      const EdgeInsets.all(
+                    20,
+                  ),
 
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
+                  decoration:
+                      BoxDecoration(
+                    gradient:
+                        const LinearGradient(
                       colors: [
                         primaryBlue,
                         Color(0xFF002866),
                       ],
-
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+                      begin:
+                          Alignment.topLeft,
+                      end: Alignment
+                          .bottomRight,
                     ),
 
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius:
+                        BorderRadius
+                            .circular(
+                      20,
+                    ),
 
                     boxShadow: [
                       BoxShadow(
-                        color: primaryBlue.withOpacity(0.25),
+                        color:
+                            primaryBlue
+                                .withOpacity(
+                          0.25,
+                        ),
                         blurRadius: 15,
-                        offset: const Offset(0, 8),
+                        offset:
+                            const Offset(
+                          0,
+                          8,
+                        ),
                       ),
                     ],
                   ),
 
                   child: Row(
                     children: [
-
-                      // Email Icon
                       Container(
-                        padding: const EdgeInsets.all(12),
+                        padding:
+                            const EdgeInsets
+                                .all(
+                          12,
+                        ),
 
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.12),
-                          shape: BoxShape.circle,
-
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.2),
-                            width: 1,
+                        decoration:
+                            BoxDecoration(
+                          color: Colors
+                              .white
+                              .withOpacity(
+                            0.12,
                           ),
+                          shape:
+                              BoxShape.circle,
                         ),
 
                         child: const Icon(
-                          Icons.mark_email_read_outlined,
-                          color: Colors.white,
+                          Icons
+                              .mark_email_read_outlined,
+                          color:
+                              Colors.white,
                           size: 26,
                         ),
                       ),
 
-                      const SizedBox(width: 16),
+                      const SizedBox(
+                        width: 16,
+                      ),
 
-                      // Email Text
                       Expanded(
                         child: Column(
                           crossAxisAlignment:
-                              CrossAxisAlignment.start,
-
+                              CrossAxisAlignment
+                                  .start,
                           children: [
-
                             const Text(
-                              'Code Sent',
-
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
+                              "Code Sent",
+                              style:
+                                  TextStyle(
+                                color:
+                                    Colors.white,
+                                fontSize:
+                                    16,
+                                fontWeight:
+                                    FontWeight
+                                        .bold,
                               ),
                             ),
 
-                            const SizedBox(height: 4),
+                            const SizedBox(
+                              height: 4,
+                            ),
 
                             Text(
-                              'We sent a 6-digit code to ${widget.email}.',
-
-                              style: const TextStyle(
-                                color: Color(0xFF93C5FD),
-                                fontSize: 12,
+                              "We sent a 6-digit code to ${widget.email}.",
+                              style:
+                                  const TextStyle(
+                                color:
+                                    Color(
+                                  0xFF93C5FD,
+                                ),
+                                fontSize:
+                                    12,
                                 height: 1.3,
                               ),
                             ),
@@ -572,102 +541,99 @@ class _VerifyOtpViewState extends State<VerifyOtpView> {
                   ),
                 ),
 
-                const SizedBox(height: 28),
+                const SizedBox(
+                  height: 28,
+                ),
 
-                // =========================
-                // TITLE
-                // =========================
                 const Text(
-                  'Enter Verification Code',
-
+                  "Enter Verification Code",
                   style: TextStyle(
                     fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF0F172A),
+                    fontWeight:
+                        FontWeight.w600,
+                    color:
+                        Color(0xFF0F172A),
                   ),
                 ),
 
-                const SizedBox(height: 8),
+                const SizedBox(
+                  height: 8,
+                ),
 
-                // =========================
-                // OTP INPUT
-                // =========================
+                // ==================================================
+                // OTP
+                // ==================================================
+
                 TextFormField(
-                  controller: _otpController,
+                  controller:
+                      _otpController,
 
-                  keyboardType: TextInputType.number,
+                  keyboardType:
+                      TextInputType.number,
 
                   maxLength: 6,
 
-                  style: const TextStyle(
+                  style:
+                      const TextStyle(
                     fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                    fontWeight:
+                        FontWeight.bold,
                     letterSpacing: 6,
-                    color: Color(0xFF0F172A),
+                    color:
+                        Color(0xFF0F172A),
                   ),
 
-                  decoration: InputDecoration(
-                    counterText: '',
+                  decoration:
+                      InputDecoration(
+                    counterText: "",
+                    hintText: "000000",
 
-                    hintText: '000000',
-
-                    hintStyle: const TextStyle(
-                      color: Color(0xFF94A3B8),
+                    hintStyle:
+                        const TextStyle(
+                      color:
+                          Color(0xFF94A3B8),
                       fontSize: 16,
                       letterSpacing: 6,
-                      fontWeight: FontWeight.normal,
                     ),
 
                     filled: true,
-                    fillColor: Colors.white,
+                    fillColor:
+                        Colors.white,
 
-                    contentPadding:
-                        const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 16,
-                    ),
-
-                    prefixIcon: const Icon(
+                    prefixIcon:
+                        const Icon(
                       Icons.pin_outlined,
-                      color: Color(0xFF64748B),
-                      size: 20,
+                      color:
+                          Color(0xFF64748B),
                     ),
 
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius:
-                          BorderRadius.circular(14),
-
-                      borderSide: const BorderSide(
-                        color: Color(0xFFE2E8F0),
-                      ),
-                    ),
-
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius:
-                          BorderRadius.circular(14),
-
-                      borderSide: const BorderSide(
-                        color: primaryBlue,
-                        width: 2,
-                      ),
-                    ),
-
-                    errorBorder: OutlineInputBorder(
-                      borderRadius:
-                          BorderRadius.circular(14),
-
-                      borderSide: const BorderSide(
-                        color: Color(0xFFEF4444),
-                      ),
-                    ),
-
-                    focusedErrorBorder:
+                    enabledBorder:
                         OutlineInputBorder(
                       borderRadius:
-                          BorderRadius.circular(14),
+                          BorderRadius
+                              .circular(
+                        14,
+                      ),
+                      borderSide:
+                          const BorderSide(
+                        color:
+                            Color(
+                          0xFFE2E8F0,
+                        ),
+                      ),
+                    ),
 
-                      borderSide: const BorderSide(
-                        color: Color(0xFFEF4444),
+                    focusedBorder:
+                        OutlineInputBorder(
+                      borderRadius:
+                          BorderRadius
+                              .circular(
+                        14,
+                      ),
+                      borderSide:
+                          const BorderSide(
+                        color:
+                            primaryBlue,
                         width: 2,
                       ),
                     ),
@@ -676,38 +642,44 @@ class _VerifyOtpViewState extends State<VerifyOtpView> {
                   validator: (value) {
                     if (value == null ||
                         value.trim().isEmpty) {
-                      return 'Please enter the code';
+                      return
+                          "Please enter the code";
                     }
 
-                    if (value.length != 6) {
-                      return 'Code must be 6 digits';
+                    if (value.length !=
+                        6) {
+                      return
+                          "Code must be 6 digits";
                     }
 
-                    if (!RegExp(r'^[0-9]+$')
-                        .hasMatch(value)) {
-                      return 'Code must contain numbers only';
+                    if (!RegExp(
+                      r'^[0-9]+$',
+                    ).hasMatch(value)) {
+                      return
+                          "Code must contain numbers only";
                     }
 
                     return null;
                   },
                 ),
 
-                // =========================
-                // RESEND OTP
-                // =========================
                 Align(
-                  alignment: Alignment.centerRight,
+                  alignment:
+                      Alignment.centerRight,
 
                   child: TextButton(
                     onPressed:
-                        _isLoading ? null : _resendOtp,
+                        _isLoading
+                            ? null
+                            : _resendOtp,
 
                     child: const Text(
                       "Didn't receive code? Resend",
-
                       style: TextStyle(
-                        color: primaryBlue,
-                        fontWeight: FontWeight.w600,
+                        color:
+                            primaryBlue,
+                        fontWeight:
+                            FontWeight.w600,
                         fontSize: 13,
                       ),
                     ),
@@ -716,57 +688,69 @@ class _VerifyOtpViewState extends State<VerifyOtpView> {
 
                 const Spacer(),
 
-                // =========================
+                // ==================================================
                 // VERIFY BUTTON
-                // =========================
+                // ==================================================
+
                 SizedBox(
-                  width: double.infinity,
+                  width:
+                      double.infinity,
                   height: 52,
 
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: primaryBlue,
-
+                  child:
+                      ElevatedButton(
+                    style:
+                        ElevatedButton
+                            .styleFrom(
+                      backgroundColor:
+                          primaryBlue,
                       elevation: 4,
-
-                      shadowColor:
-                          primaryBlue.withOpacity(0.35),
-
                       shape:
                           RoundedRectangleBorder(
                         borderRadius:
-                            BorderRadius.circular(16),
+                            BorderRadius
+                                .circular(
+                          16,
+                        ),
                       ),
                     ),
 
                     onPressed:
-                        _isLoading ? null : _verifyOtp,
+                        _isLoading
+                            ? null
+                            : _verifyOtp,
 
                     child: _isLoading
                         ? const SizedBox(
                             height: 20,
                             width: 20,
-
                             child:
                                 CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2,
+                              color:
+                                  Colors.white,
+                              strokeWidth:
+                                  2,
                             ),
                           )
-
                         : const Text(
-                            'Verify & Continue',
-
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                            "Verify & Continue",
+                            style:
+                                TextStyle(
+                              fontSize:
+                                  16,
+                              fontWeight:
+                                  FontWeight
+                                      .bold,
+                              color:
+                                  Colors.white,
                             ),
                           ),
                   ),
                 ),
 
-                const SizedBox(height: 16),
+                const SizedBox(
+                  height: 16,
+                ),
               ],
             ),
           ),
@@ -775,4 +759,3 @@ class _VerifyOtpViewState extends State<VerifyOtpView> {
     );
   }
 }
-

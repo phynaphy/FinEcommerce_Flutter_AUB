@@ -1,187 +1,3 @@
-
-// // import 'dart:convert';
-
-// // import 'package:flutter_application_ecommerce/api/api_constant.dart';
-
-// // import 'package:flutter_application_ecommerce/api/request_service/login_request.dart';
-// // import 'package:flutter_application_ecommerce/api/request_service/register_request.dart';
-// // import 'package:flutter_application_ecommerce/api/request_service/reset_password_request.dart';
-// // import 'package:http/http.dart' as http;
-
-// // class AuthService {
-
-// //   // =========================
-// //   // LOGIN
-// //   // =========================
-// //   Future<http.Response> login(LoginRequest request) async {
-// //     final url = Uri.parse(
-// //       "${ApiConstant.baseUrl}/auth/login",
-// //     );
-
-// //     return await http.post(
-// //       url,
-// //       headers: {
-// //         "Content-Type": "application/json",
-// //       },
-// //       body: jsonEncode(request.toJson()),
-// //     );
-// //   }
-
-// //   // =========================
-// //   // REGISTER
-// //   // =========================
-// //   Future<http.Response> register(RegisterRequest request) async {
-// //     final url = Uri.parse(
-// //       "${ApiConstant.baseUrl}/auth/register",
-// //     );
-
-// //     return await http.post(
-// //       url,
-// //       headers: {
-// //         "Content-Type": "application/json",
-// //       },
-// //       body: jsonEncode(request.toJson()),
-// //     );
-// //   }
-
-// // // Reset Password
-// // Future<http.Response> resetPassword(
-// //   ResetPasswordRequest request,
-// // ) async {
-// //   final url = Uri.parse(
-// //     "${ApiConstant.baseUrl}/auth/reset-password",
-// //   );
-
-// //   return await http.post(
-// //     url,
-// //     headers: {
-// //       "Content-Type": "application/json",
-// //     },
-// //     body: jsonEncode(request.toJson()),
-// //   );
-// // }
-
-
-// // }
-// import 'dart:convert';
-
-// import 'package:flutter_application_ecommerce/api/api_constant.dart';
-// import 'package:flutter_application_ecommerce/api/request_service/login_request.dart';
-// import 'package:flutter_application_ecommerce/api/request_service/register_request.dart';
-// import 'package:flutter_application_ecommerce/api/request_service/reset_password_request.dart';
-// import 'package:http/http.dart' as http;
-
-// class AuthService {
-//   // LOGIN
-//   Future<http.Response> login(LoginRequest request) async {
-//     final url = Uri.parse(
-//       "${ApiConstant.baseUrl}/auth/login",
-//     );
-
-//     return await http.post(
-//       url,
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: jsonEncode(request.toJson()),
-//     );
-//   }
-
-//   // REGISTER
-//   Future<http.Response> register(RegisterRequest request) async {
-//     final url = Uri.parse(
-//       "${ApiConstant.baseUrl}/auth/register",
-//     );
-
-//     return await http.post(
-//       url,
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: jsonEncode(request.toJson()),
-//     );
-//   }
-
-//   // SEND OTP
-//   Future<http.Response> forgotPassword(String email) async {
-//     final url = Uri.parse(
-//       "${ApiConstant.baseUrl}/auth/forgot-password",
-//     );
-
-//     return await http.post(
-//       url,
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: jsonEncode({
-//         "email": email,
-//       }),
-//     );
-//   }
-//   ///////////////////app verify opt
-  
-// //   Future<http.Response> verifyOtp(String email, String otp) async {
-// //   final url = Uri.parse(
-// //     "${ApiConstant.baseUrl}/auth/change-password/verify-otp",
-// //   );
-
-// //   return await http.post(
-// //     url,
-// //     headers: {
-// //       "Content-Type": "application/json",
-// //     },
-// //     body: jsonEncode({
-// //       "email": email,
-// //       "otp": otp,
-// //     }),
-// //   );
-// // }
-// Future<http.Response> verifyOtp(
-//   String otp,
-//   String email,
-// ) async {
-//   final url = Uri.parse(
-//     "${ApiConstant.baseUrl}/auth/change-password/verify-otp",
-//   );
-
-//   final body = {
-//     "email": email,
-//     "otp": otp,
-//   };
-
-//   print("VERIFY OTP URL: $url");
-//   print("VERIFY OTP BODY: ${jsonEncode(body)}");
-
-//   return await http.post(
-//     url,
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: jsonEncode(body),
-//   );
-// }
-
-//   // RESET PASSWORD
-//   Future<http.Response> resetPassword(
-//     ResetPasswordRequest request,
-//   ) async {
-//     final url = Uri.parse(
-//       "${ApiConstant.baseUrl}/auth/change-password/request-otp",
-//     );
-
-//     return await http.post(
-//       url,
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: jsonEncode(request.toJson()),
-//     );
-//   }
-// }
-
-
-
-
 import 'dart:convert';
 
 import 'package:flutter_application_ecommerce/api/api_constant.dart';
@@ -189,23 +5,29 @@ import 'package:flutter_application_ecommerce/api/request_service/login_request.
 import 'package:flutter_application_ecommerce/api/request_service/register_request.dart';
 import 'package:flutter_application_ecommerce/api/request_service/reset_password_request.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
   // ============================================================
   // LOGIN
   // ============================================================
+
   Future<http.Response> login(LoginRequest request) async {
     final url = Uri.parse(
       "${ApiConstant.baseUrl}/auth/login",
     );
 
-    print("LOGIN URL: $url");
-    print("LOGIN BODY: ${jsonEncode(request.toJson())}");
+    print("=================================");
+    print("LOGIN");
+    print("URL: $url");
+    print("BODY: ${jsonEncode(request.toJson())}");
+    print("=================================");
 
     final response = await http.post(
       url,
       headers: {
         "Content-Type": "application/json",
+        "Accept": "application/json",
       },
       body: jsonEncode(request.toJson()),
     );
@@ -213,24 +35,56 @@ class AuthService {
     print("LOGIN STATUS: ${response.statusCode}");
     print("LOGIN RESPONSE: ${response.body}");
 
+    // Save token
+    if (response.statusCode == 200 ||
+        response.statusCode == 201) {
+      try {
+        final data = jsonDecode(response.body);
+
+        final token = data["token"];
+
+        if (token != null &&
+            token.toString().isNotEmpty) {
+          final prefs =
+              await SharedPreferences.getInstance();
+
+          await prefs.setString(
+            "token",
+            token.toString(),
+          );
+
+          print("TOKEN SAVED");
+        }
+      } catch (e) {
+        print("ERROR SAVING TOKEN: $e");
+      }
+    }
+
     return response;
   }
 
   // ============================================================
   // REGISTER
   // ============================================================
-  Future<http.Response> register(RegisterRequest request) async {
+
+  Future<http.Response> register(
+    RegisterRequest request,
+  ) async {
     final url = Uri.parse(
       "${ApiConstant.baseUrl}/auth/register",
     );
 
-    print("REGISTER URL: $url");
-    print("REGISTER BODY: ${jsonEncode(request.toJson())}");
+    print("=================================");
+    print("REGISTER");
+    print("URL: $url");
+    print("BODY: ${jsonEncode(request.toJson())}");
+    print("=================================");
 
     final response = await http.post(
       url,
       headers: {
         "Content-Type": "application/json",
+        "Accept": "application/json",
       },
       body: jsonEncode(request.toJson()),
     );
@@ -242,9 +96,57 @@ class AuthService {
   }
 
   // ============================================================
-  // FORGOT PASSWORD - SEND OTP
+  // LOGOUT
   // ============================================================
-  Future<http.Response> forgotPassword(String email) async {
+
+  Future<void> logout() async {
+    final prefs =
+        await SharedPreferences.getInstance();
+
+    await prefs.remove("token");
+
+    print("=================================");
+    print("LOGOUT");
+    print("TOKEN REMOVED");
+    print("=================================");
+  }
+
+  // ============================================================
+  // GET TOKEN
+  // ============================================================
+
+  Future<String?> getToken() async {
+    final prefs =
+        await SharedPreferences.getInstance();
+
+    final token = prefs.getString("token");
+
+    print("=================================");
+    print("GET TOKEN");
+    print(
+      "TOKEN EXISTS: "
+      "${token != null && token.isNotEmpty}",
+    );
+    print("=================================");
+
+    return token;
+  }
+
+  // ============================================================
+  // FORGOT PASSWORD - SEND OTP
+  //
+  // POST:
+  // /auth/forgot-password
+  //
+  // BODY:
+  // {
+  //   "email": "example@gmail.com"
+  // }
+  // ============================================================
+
+  Future<http.Response> forgotPassword(
+    String email,
+  ) async {
     final url = Uri.parse(
       "${ApiConstant.baseUrl}/auth/forgot-password",
     );
@@ -254,7 +156,7 @@ class AuthService {
     };
 
     print("=================================");
-    print("FORGOT PASSWORD - SEND OTP");
+    print("FORGOT PASSWORD");
     print("URL: $url");
     print("BODY: ${jsonEncode(body)}");
     print("=================================");
@@ -263,19 +165,37 @@ class AuthService {
       url,
       headers: {
         "Content-Type": "application/json",
+        "Accept": "application/json",
       },
       body: jsonEncode(body),
     );
 
-    print("FORGOT PASSWORD STATUS: ${response.statusCode}");
-    print("FORGOT PASSWORD RESPONSE: ${response.body}");
+    print(
+      "FORGOT PASSWORD STATUS: "
+      "${response.statusCode}",
+    );
+
+    print(
+      "FORGOT PASSWORD RESPONSE: "
+      "${response.body}",
+    );
 
     return response;
   }
 
   // ============================================================
   // VERIFY OTP
+  //
+  // POST:
+  // /auth/change-password/verify-otp
+  //
+  // BODY:
+  // {
+  //   "email": "example@gmail.com",
+  //   "otp": "123456"
+  // }
   // ============================================================
+
   Future<http.Response> verifyOtp(
     String otp,
     String email,
@@ -299,12 +219,20 @@ class AuthService {
       url,
       headers: {
         "Content-Type": "application/json",
+        "Accept": "application/json",
       },
       body: jsonEncode(body),
     );
 
-    print("VERIFY OTP STATUS: ${response.statusCode}");
-    print("VERIFY OTP RESPONSE: ${response.body}");
+    print(
+      "VERIFY OTP STATUS: "
+      "${response.statusCode}",
+    );
+
+    print(
+      "VERIFY OTP RESPONSE: "
+      "${response.body}",
+    );
 
     return response;
   }
@@ -312,26 +240,22 @@ class AuthService {
   // ============================================================
   // RESEND OTP
   // ============================================================
-  Future<http.Response> resendOtp(String email) async {
+
+  Future<http.Response> resendOtp(
+    String email,
+  ) async {
     return await forgotPassword(email);
   }
 
   // ============================================================
   // NORMAL CHANGE PASSWORD
   //
-  // Used when the user is already logged in and knows
-  // their current password.
+  // Used when user is already logged in.
   //
   // POST:
   // /auth/change-password
-  //
-  // Body:
-  // {
-  //   "currentPassword": "...",
-  //   "newPassword": "...",
-  //   "confirmPassword": "..."
-  // }
   // ============================================================
+
   Future<http.Response> changePassword(
     String currentPassword,
     String newPassword,
@@ -347,55 +271,59 @@ class AuthService {
       "confirmPassword": confirmPassword,
     };
 
-    print("=================================");
-    print("NORMAL CHANGE PASSWORD");
-    print("URL: $url");
-    print("BODY: ${jsonEncode(body)}");
-    print("=================================");
+    final prefs =
+        await SharedPreferences.getInstance();
+
+    final token = prefs.getString("token");
+
+    if (token == null || token.isEmpty) {
+      return http.Response(
+        jsonEncode({
+          "message": "User is not logged in",
+        }),
+        401,
+      );
+    }
 
     final response = await http.post(
       url,
       headers: {
         "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": "Bearer $token",
       },
       body: jsonEncode(body),
     );
-
-    print("CHANGE PASSWORD STATUS: ${response.statusCode}");
-    print("CHANGE PASSWORD RESPONSE: ${response.body}");
 
     return response;
   }
 
   // ============================================================
-  // FORGOT PASSWORD - COMPLETE RESET
-  //
-  // Used AFTER OTP verification.
+  // COMPLETE RESET PASSWORD
   //
   // POST:
-  // /auth/change-password/complete?email=xxx
+  // /auth/change-password/complete?id=12
   //
-  // Body:
+  // BODY:
   // {
-  //   "newPassword": "...",
-  //   "confirmPassword": "..."
+  //   "currentPassword": "newPassword1234",
+  //   "newPassword": "newPassword12345",
+  //   "confirmPassword": "newPassword12345"
   // }
-  //
-  // IMPORTANT:
-  // There is NO currentPassword here because the user
-  // forgot their password.
   // ============================================================
+
   Future<http.Response> completeResetPassword(
-    String email,
+    int id,
+    String currentPassword,
     String newPassword,
     String confirmPassword,
   ) async {
     final url = Uri.parse(
-      "${ApiConstant.baseUrl}/auth/change-password/complete"
-      "?email=${Uri.encodeComponent(email.trim())}",
+      "${ApiConstant.baseUrl}/auth/change-password/complete?id=$id",
     );
 
     final body = {
+      "currentPassword": currentPassword,
       "newPassword": newPassword,
       "confirmPassword": confirmPassword,
     };
@@ -403,6 +331,7 @@ class AuthService {
     print("=================================");
     print("COMPLETE RESET PASSWORD");
     print("URL: $url");
+    print("ID: $id");
     print("BODY: ${jsonEncode(body)}");
     print("=================================");
 
@@ -410,22 +339,24 @@ class AuthService {
       url,
       headers: {
         "Content-Type": "application/json",
+        "Accept": "application/json",
       },
       body: jsonEncode(body),
     );
 
-    print("RESET PASSWORD STATUS: ${response.statusCode}");
-    print("RESET PASSWORD RESPONSE: ${response.body}");
+    print("=================================");
+    print("RESET PASSWORD RESULT");
+    print("STATUS: ${response.statusCode}");
+    print("BODY: ${response.body}");
+    print("=================================");
 
     return response;
   }
 
   // ============================================================
-  // OLD RESET PASSWORD METHOD
-  //
-  // Keep this only if your backend still uses this endpoint.
-  // Otherwise you can remove it.
+  // OLD RESET PASSWORD
   // ============================================================
+
   Future<http.Response> resetPassword(
     ResetPasswordRequest request,
   ) async {
@@ -433,22 +364,16 @@ class AuthService {
       "${ApiConstant.baseUrl}/auth/change-password/request-otp",
     );
 
-    print("RESET PASSWORD REQUEST OTP URL: $url");
-    print(
-      "RESET PASSWORD REQUEST OTP BODY: "
-      "${jsonEncode(request.toJson())}",
-    );
-
     final response = await http.post(
       url,
       headers: {
         "Content-Type": "application/json",
+        "Accept": "application/json",
       },
-      body: jsonEncode(request.toJson()),
+      body: jsonEncode(
+        request.toJson(),
+      ),
     );
-
-    print("RESET PASSWORD REQUEST STATUS: ${response.statusCode}");
-    print("RESET PASSWORD REQUEST RESPONSE: ${response.body}");
 
     return response;
   }
