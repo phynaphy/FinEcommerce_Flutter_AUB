@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'category_controller.dart';
 
-class CategoryView extends GetView {
+class CategoryView extends GetView<CategoryController> {
   const CategoryView({super.key});
 
   static const Color primaryBlue = Color(0xFF06499F);
@@ -15,40 +15,41 @@ class CategoryView extends GetView {
       appBar: AppBar(
         backgroundColor: backgroundColor,
         elevation: 0,
-        leading: const Icon(Icons.menu, color: primaryBlue),
+        leading: const Icon(Icons.menu, color: primaryBlue, size: 28),
         title: const Text(
           'Categories',
           style: TextStyle(
             color: primaryBlue,
-            fontSize: 20,
+            fontSize: 22, // 🔹 ដំឡើងពី 18 ទៅ 22
             fontWeight: FontWeight.bold,
           ),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.search, color: Colors.grey),
+            icon: const Icon(Icons.search, color: Colors.grey, size: 26),
             onPressed: () {},
           ),
           IconButton(
-            icon: const Icon(Icons.shopping_cart_outlined, color: Colors.grey),
+            icon: const Icon(Icons.shopping_cart_outlined, color: Colors.grey, size: 26),
             onPressed: () {},
           ),
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // SEARCH BAR
             TextField(
+              style: const TextStyle(fontSize: 16),
               decoration: InputDecoration(
                 hintText: 'Search products in categories...',
-                hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
-                prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                hintStyle: const TextStyle(color: Colors.grey, fontSize: 15),
+                prefixIcon: const Icon(Icons.search, color: Colors.grey, size: 24),
                 filled: true,
                 fillColor: Colors.white,
-                contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                contentPadding: const EdgeInsets.symmetric(vertical: 14),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
@@ -68,18 +69,21 @@ class CategoryView extends GetView {
                 const Text(
                   'Featured Collections',
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: 19, // 🔹 ដំឡើងពី 16 ទៅ 19
                     fontWeight: FontWeight.bold,
                     color: Colors.black87,
                   ),
                 ),
                 TextButton(
                   onPressed: () {},
-                  child: const Text('View All', style: TextStyle(color: primaryBlue)),
+                  child: const Text(
+                    'View All', 
+                    style: TextStyle(color: primaryBlue, fontSize: 15, fontWeight: FontWeight.w600),
+                  ),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
 
             // FEATURED CARDS LIST
             Obx(() => Column(
@@ -94,7 +98,7 @@ class CategoryView extends GetView {
             const Text(
               'All Categories',
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 19, // 🔹 ដំឡើងពី 16 ទៅ 19
                 fontWeight: FontWeight.bold,
                 color: Colors.black87,
               ),
@@ -116,11 +120,11 @@ class CategoryView extends GetView {
 
   Widget _buildFeaturedCard(FeaturedCollection item) {
     return Container(
-      height: 140,
+      height: 130, // 🔹 ដំឡើងកម្ពស់ Card ពី 100 ទៅ 130
       width: double.infinity,
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(14),
         image: DecorationImage(
           image: NetworkImage(item.imageUrl),
           fit: BoxFit.cover,
@@ -129,7 +133,7 @@ class CategoryView extends GetView {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(14),
           gradient: LinearGradient(
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
@@ -147,15 +151,16 @@ class CategoryView extends GetView {
               item.title,
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 18,
+                fontSize: 18, // 🔹 ដំឡើងពី 15 ទៅ 18
                 fontWeight: FontWeight.bold,
               ),
             ),
+            const SizedBox(height: 2),
             Text(
               item.subtitle,
               style: const TextStyle(
                 color: Colors.white70,
-                fontSize: 12,
+                fontSize: 13, // 🔹 ដំឡើងពី 11 ទៅ 13
               ),
             ),
           ],
@@ -173,12 +178,13 @@ class CategoryView extends GetView {
         border: Border.all(color: const Color(0xFFE5E7EB)),
       ),
       child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
         leading: ClipRRect(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(10),
           child: Image.network(
             item.imageUrl,
-            width: 48,
-            height: 48,
+            width: 52, // 🔹 ដំឡើងទំហំរូបភាពពី 42x42 ទៅ 52x52
+            height: 52,
             fit: BoxFit.cover,
           ),
         ),
@@ -186,17 +192,17 @@ class CategoryView extends GetView {
           item.name,
           style: const TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 14,
+            fontSize: 16, // 🔹 ដំឡើងពី 13.5 ទៅ 16
           ),
         ),
         subtitle: Text(
           item.productCount,
           style: const TextStyle(
             color: Colors.grey,
-            fontSize: 12,
+            fontSize: 13, // 🔹 ដំឡើងពី 11 ទៅ 13
           ),
         ),
-        trailing: const Icon(Icons.chevron_right, color: Colors.grey),
+        trailing: const Icon(Icons.chevron_right, color: Colors.grey, size: 24),
         onTap: () {},
       ),
     );
@@ -204,7 +210,7 @@ class CategoryView extends GetView {
 
   Widget _buildBottomNavigationBar() {
     return Container(
-      height: 68,
+      height: 66, // 🔹 ដំឡើងកម្ពស់ Bottom Nav ពី 60 ទៅ 66
       decoration: const BoxDecoration(
         color: Colors.white,
         border: Border(top: BorderSide(color: Color(0xFFE5E7EB))),
@@ -231,20 +237,20 @@ class CategoryView extends GetView {
           decoration: isSelected
               ? BoxDecoration(
                   color: const Color(0xFF60A5FA),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(10),
                 )
               : null,
           child: Icon(
             icon,
             color: isSelected ? Colors.white : Colors.grey,
-            size: 20,
+            size: 22, // 🔹 ដំឡើងទំហំ Icon ពី 18 ទៅ 22
           ),
         ),
-        const SizedBox(height: 2),
+        const SizedBox(height: 3),
         Text(
           label,
           style: TextStyle(
-            fontSize: 10,
+            fontSize: 11, // 🔹 ដំឡើងអក្សរ Nav Label ពី 9.5 ទៅ 11
             color: isSelected ? primaryBlue : Colors.grey,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
           ),
