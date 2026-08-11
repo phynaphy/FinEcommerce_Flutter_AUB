@@ -35,7 +35,7 @@ class AppPages {
       binding: CategoryBinding(),
     ),
     GetPage(
-  name: AppRoutes.cart, // ឬឈ្មោះ route របស់អ្នក
+  name: AppRoutes.cart, 
   page: () => const CartView(),
   binding: CartBinding(),
 ),
