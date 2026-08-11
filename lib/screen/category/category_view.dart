@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_ecommerce/app/routes/approutes.dart'; // 👈 Import AppRoutes
 import 'package:get/get.dart';
 import 'category_controller.dart';
 
@@ -20,7 +21,7 @@ class CategoryView extends GetView<CategoryController> {
           'Categories',
           style: TextStyle(
             color: primaryBlue,
-            fontSize: 22, // 🔹 ដំឡើងពី 18 ទៅ 22
+            fontSize: 22,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -31,7 +32,9 @@ class CategoryView extends GetView<CategoryController> {
           ),
           IconButton(
             icon: const Icon(Icons.shopping_cart_outlined, color: Colors.grey, size: 26),
-            onPressed: () {},
+            onPressed: () {
+              Get.toNamed(AppRoutes.cart); // 👈 Navigate via route name
+            },
           ),
         ],
       ),
@@ -40,7 +43,6 @@ class CategoryView extends GetView<CategoryController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // SEARCH BAR
             TextField(
               style: const TextStyle(fontSize: 16),
               decoration: InputDecoration(
@@ -61,15 +63,13 @@ class CategoryView extends GetView<CategoryController> {
               ),
             ),
             const SizedBox(height: 20),
-
-            // FEATURED COLLECTIONS HEADER
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
                   'Featured Collections',
                   style: TextStyle(
-                    fontSize: 19, // 🔹 ដំឡើងពី 16 ទៅ 19
+                    fontSize: 19,
                     fontWeight: FontWeight.bold,
                     color: Colors.black87,
                   ),
@@ -84,28 +84,21 @@ class CategoryView extends GetView<CategoryController> {
               ],
             ),
             const SizedBox(height: 10),
-
-            // FEATURED CARDS LIST
             Obx(() => Column(
                   children: controller.featuredCollections
                       .map((item) => _buildFeaturedCard(item))
                       .toList(),
                 )),
-
             const SizedBox(height: 20),
-
-            // ALL CATEGORIES HEADER
             const Text(
               'All Categories',
               style: TextStyle(
-                fontSize: 19, // 🔹 ដំឡើងពី 16 ទៅ 19
+                fontSize: 19,
                 fontWeight: FontWeight.bold,
                 color: Colors.black87,
               ),
             ),
             const SizedBox(height: 12),
-
-            // CATEGORY LIST ITEMS
             Obx(() => Column(
                   children: controller.categories
                       .map((item) => _buildCategoryTile(item))
@@ -120,7 +113,7 @@ class CategoryView extends GetView<CategoryController> {
 
   Widget _buildFeaturedCard(FeaturedCollection item) {
     return Container(
-      height: 130, // 🔹 ដំឡើងកម្ពស់ Card ពី 100 ទៅ 130
+      height: 130,
       width: double.infinity,
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -151,7 +144,7 @@ class CategoryView extends GetView<CategoryController> {
               item.title,
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 18, // 🔹 ដំឡើងពី 15 ទៅ 18
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -160,7 +153,7 @@ class CategoryView extends GetView<CategoryController> {
               item.subtitle,
               style: const TextStyle(
                 color: Colors.white70,
-                fontSize: 13, // 🔹 ដំឡើងពី 11 ទៅ 13
+                fontSize: 13,
               ),
             ),
           ],
@@ -183,7 +176,7 @@ class CategoryView extends GetView<CategoryController> {
           borderRadius: BorderRadius.circular(10),
           child: Image.network(
             item.imageUrl,
-            width: 52, // 🔹 ដំឡើងទំហំរូបភាពពី 42x42 ទៅ 52x52
+            width: 52,
             height: 52,
             fit: BoxFit.cover,
           ),
@@ -192,14 +185,14 @@ class CategoryView extends GetView<CategoryController> {
           item.name,
           style: const TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 16, // 🔹 ដំឡើងពី 13.5 ទៅ 16
+            fontSize: 16,
           ),
         ),
         subtitle: Text(
           item.productCount,
           style: const TextStyle(
             color: Colors.grey,
-            fontSize: 13, // 🔹 ដំឡើងពី 11 ទៅ 13
+            fontSize: 13,
           ),
         ),
         trailing: const Icon(Icons.chevron_right, color: Colors.grey, size: 24),
@@ -210,7 +203,7 @@ class CategoryView extends GetView<CategoryController> {
 
   Widget _buildBottomNavigationBar() {
     return Container(
-      height: 66, // 🔹 ដំឡើងកម្ពស់ Bottom Nav ពី 60 ទៅ 66
+      height: 66,
       decoration: const BoxDecoration(
         color: Colors.white,
         border: Border(top: BorderSide(color: Color(0xFFE5E7EB))),
@@ -218,44 +211,53 @@ class CategoryView extends GetView<CategoryController> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildNavItem(Icons.home_outlined, 'Home', false),
-          _buildNavItem(Icons.grid_view_rounded, 'Categories', true),
-          _buildNavItem(Icons.shopping_cart_outlined, 'Cart', false),
-          _buildNavItem(Icons.receipt_long_outlined, 'Orders', false),
-          _buildNavItem(Icons.person_outline, 'Profile', false),
+          _buildNavItem(Icons.home_outlined, 'Home', false, () {
+            Get.offAllNamed(AppRoutes.homescreen);
+          }),
+          _buildNavItem(Icons.grid_view_rounded, 'Categories', true, () {}),
+          _buildNavItem(Icons.shopping_cart_outlined, 'Cart', false, () {
+            Get.toNamed(AppRoutes.cart); // 👈 Navigate via route name
+          }),
+          _buildNavItem(Icons.receipt_long_outlined, 'Orders', false, () {}),
+          _buildNavItem(Icons.person_outline, 'Profile', false, () {
+            Get.toNamed(AppRoutes.profile);
+          }),
         ],
       ),
     );
   }
 
-  Widget _buildNavItem(IconData icon, String label, bool isSelected) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-          decoration: isSelected
-              ? BoxDecoration(
-                  color: const Color(0xFF60A5FA),
-                  borderRadius: BorderRadius.circular(10),
-                )
-              : null,
-          child: Icon(
-            icon,
-            color: isSelected ? Colors.white : Colors.grey,
-            size: 22, // 🔹 ដំឡើងទំហំ Icon ពី 18 ទៅ 22
+  Widget _buildNavItem(IconData icon, String label, bool isSelected, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            decoration: isSelected
+                ? BoxDecoration(
+                    color: const Color(0xFF60A5FA),
+                    borderRadius: BorderRadius.circular(10),
+                  )
+                : null,
+            child: Icon(
+              icon,
+              color: isSelected ? Colors.white : Colors.grey,
+              size: 22,
+            ),
           ),
-        ),
-        const SizedBox(height: 3),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 11, // 🔹 ដំឡើងអក្សរ Nav Label ពី 9.5 ទៅ 11
-            color: isSelected ? primaryBlue : Colors.grey,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          const SizedBox(height: 3),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11,
+              color: isSelected ? primaryBlue : Colors.grey,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

@@ -13,6 +13,8 @@ import 'package:flutter_application_ecommerce/screen/profile_screen/profile_scre
 import 'package:flutter_application_ecommerce/screen/register_screen/register_screen_view.dart';
 import 'package:flutter_application_ecommerce/screen/splash_screen.dart';
 import 'package:get/get.dart';
+import 'package:flutter_application_ecommerce/screen/cart/cart_binding.dart';
+import 'package:flutter_application_ecommerce/screen/cart/cart_view.dart';
 
 class AppPages {
   static final routes = [
@@ -32,5 +34,10 @@ class AppPages {
       page: () => const CategoryView(),
       binding: CategoryBinding(),
     ),
+    GetPage(
+  name: AppRoutes.cart, // ឬឈ្មោះ route របស់អ្នក
+  page: () => const CartView(),
+  binding: CartBinding(),
+),
   ];
 }
