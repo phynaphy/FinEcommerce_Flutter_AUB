@@ -1,9 +1,11 @@
-class AppRoutes {
-  static const String splash = '/splash';
-  static const String splash2= '/splash2';
-  static const String login = '/login';
-  static const String register = '/register';
-  static const String homescreen = '/homescreen';
-  static const String profile = '/profile';
-  
+abstract class AppRoutes {
+  static const splash = '/splash';
+  static const splash2 = '/splash2';
+  static const login = '/login';
+  static const register = '/register';
+  static const homescreen = '/homescreen';
+  static const profile = '/profile';
+  static const profileinformation = '/profileinformation';
+  static const category = '/category'; 
+  static const nav_button = '/nav_button';
 }
