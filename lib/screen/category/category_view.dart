@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_ecommerce/app/routes/approutes.dart'; // 👈 Import AppRoutes
+import 'package:flutter_application_ecommerce/app/routes/approutes.dart';
 import 'package:get/get.dart';
 import 'category_controller.dart';
 
@@ -33,7 +33,7 @@ class CategoryView extends GetView<CategoryController> {
           IconButton(
             icon: const Icon(Icons.shopping_cart_outlined, color: Colors.grey, size: 26),
             onPressed: () {
-              Get.toNamed(AppRoutes.cart); // 👈 Navigate via route name
+              Get.toNamed(AppRoutes.cart);
             },
           ),
         ],
@@ -75,9 +75,11 @@ class CategoryView extends GetView<CategoryController> {
                   ),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Get.toNamed(AppRoutes.featuredCollections);
+                  },
                   child: const Text(
-                    'View All', 
+                    'View All',
                     style: TextStyle(color: primaryBlue, fontSize: 15, fontWeight: FontWeight.w600),
                   ),
                 ),
@@ -112,51 +114,81 @@ class CategoryView extends GetView<CategoryController> {
   }
 
   Widget _buildFeaturedCard(FeaturedCollection item) {
-    return Container(
-      height: 130,
-      width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(14),
-        image: DecorationImage(
-          image: NetworkImage(item.imageUrl),
-          fit: BoxFit.cover,
-        ),
-      ),
+    return GestureDetector(
+      onTap: () {
+        Get.toNamed(AppRoutes.categoryProducts, arguments: item);
+      },
       child: Container(
-        padding: const EdgeInsets.all(16),
+        height: 130,
+        width: double.infinity,
+        margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
+          color: const Color(0xFFE5E7EB),
           borderRadius: BorderRadius.circular(14),
-          gradient: LinearGradient(
-            begin: Alignment.bottomCenter,
-            end: Alignment.topCenter,
-            colors: [
-              Colors.black.withOpacity(0.8),
-              Colors.transparent,
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(14),
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: Image.network(
+                  item.imageUrl,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      color: const Color(0xFFD1D5DB),
+                      child: const Icon(
+                        Icons.image_not_supported_outlined,
+                        color: Colors.white70,
+                        size: 40,
+                      ),
+                    );
+                  },
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return const Center(
+                      child: CircularProgressIndicator(strokeWidth: 2, color: primaryBlue),
+                    );
+                  },
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    colors: [
+                      Colors.black.withOpacity(0.8),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.title,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      item.subtitle,
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              item.title,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              item.subtitle,
-              style: const TextStyle(
-                color: Colors.white70,
-                fontSize: 13,
-              ),
-            ),
-          ],
         ),
       ),
     );
@@ -172,13 +204,41 @@ class CategoryView extends GetView<CategoryController> {
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-        leading: ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: Image.network(
-            item.imageUrl,
-            width: 52,
-            height: 52,
-            fit: BoxFit.cover,
+        leading: Container(
+          width: 52,
+          height: 52,
+          decoration: BoxDecoration(
+            color: const Color(0xFFF3F4F6),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Image.network(
+              item.imageUrl,
+              width: 52,
+              height: 52,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return const Icon(
+                  Icons.category_outlined,
+                  color: Colors.grey,
+                  size: 26,
+                );
+              },
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return const Center(
+                  child: SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: primaryBlue,
+                    ),
+                  ),
+                );
+              },
+            ),
           ),
         ),
         title: Text(
@@ -196,7 +256,9 @@ class CategoryView extends GetView<CategoryController> {
           ),
         ),
         trailing: const Icon(Icons.chevron_right, color: Colors.grey, size: 24),
-        onTap: () {},
+        onTap: () {
+          Get.toNamed(AppRoutes.categoryProducts, arguments: item);
+        },
       ),
     );
   }
@@ -216,7 +278,7 @@ class CategoryView extends GetView<CategoryController> {
           }),
           _buildNavItem(Icons.grid_view_rounded, 'Categories', true, () {}),
           _buildNavItem(Icons.shopping_cart_outlined, 'Cart', false, () {
-            Get.toNamed(AppRoutes.cart); // 👈 Navigate via route name
+            Get.toNamed(AppRoutes.cart);
           }),
           _buildNavItem(Icons.receipt_long_outlined, 'Orders', false, () {}),
           _buildNavItem(Icons.person_outline, 'Profile', false, () {

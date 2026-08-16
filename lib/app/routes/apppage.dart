@@ -1,6 +1,17 @@
 import 'package:flutter_application_ecommerce/app/routes/approutes.dart';
 import 'package:flutter_application_ecommerce/screen/category/category_binding.dart';
 import 'package:flutter_application_ecommerce/screen/category/category_view.dart';
+import 'package:flutter_application_ecommerce/screen/category_beauty/category_beauty_binding.dart';
+import 'package:flutter_application_ecommerce/screen/category_beauty/category_beauty_view.dart';
+import 'package:flutter_application_ecommerce/screen/category_fashion/category_fashion_binding.dart';
+import 'package:flutter_application_ecommerce/screen/category_fashion/category_fashion_view.dart';
+import 'package:flutter_application_ecommerce/screen/category_kitchen/category_kitchen_binding.dart';
+import 'package:flutter_application_ecommerce/screen/category_kitchen/category_kitchen_controller.dart';
+import 'package:flutter_application_ecommerce/screen/category_kitchen/category_kitchen_view.dart';
+import 'package:flutter_application_ecommerce/screen/category_products/category_products_controller.dart';
+import 'package:flutter_application_ecommerce/screen/category_products/category_products_view.dart';
+import 'package:flutter_application_ecommerce/screen/featured_collections/featured_collections_binding.dart';
+import 'package:flutter_application_ecommerce/screen/featured_collections/featured_collections_view.dart';
 import 'package:flutter_application_ecommerce/screen/home_screen/homescreen_view.dart';
 import 'package:flutter_application_ecommerce/screen/home_screen/second_splash.dart';
 import 'package:flutter_application_ecommerce/screen/login_screen/login_screen_view.dart';
@@ -38,6 +49,34 @@ class AppPages {
   name: AppRoutes.cart, 
   page: () => const CartView(),
   binding: CartBinding(),
+    ),
+
+  GetPage(
+      name: AppRoutes.featuredCollections,
+      page: () => const FeaturedCollectionsView(),
+      binding: FeaturedCollectionsBinding(),   
+),
+GetPage(
+  name: AppRoutes.categoryProducts,
+  page: () => const CategoryProductsView(),
+  binding: BindingsBuilder(() {
+    Get.lazyPut<CategoryProductsController>(() => CategoryProductsController());
+  }),
+),
+GetPage(
+  name: AppRoutes.categoryFashion,
+  page: () => const CategoryFashionView(),
+  binding: CategoryFashionBinding(),
+),
+GetPage(
+  name: AppRoutes.categoryKitchen,
+  page: () => const CategoryKitchenView(),
+  binding: CategoryKitchenBinding(),
+),
+GetPage(
+  name: AppRoutes.categoryBeauty,
+  page: () => const CategoryBeautyView(),
+  binding: CategoryBeautyBinding(),
 ),
   ];
 }
