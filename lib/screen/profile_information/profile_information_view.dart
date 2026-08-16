@@ -22,14 +22,16 @@ class ProfileInformationView extends StatelessWidget {
         backgroundColor: backgroundColor,
         elevation: 0,
         centerTitle: true,
-        leading: IconButton(
-          onPressed: controller.onBackButtonPressed,
-          icon: const Icon(
-            Icons.arrow_back_ios_new,
-            size: 20,
-            color: grayText,
-          ),
-        ),
+       leading: IconButton(
+  onPressed: () {
+    Navigator.pop(context);
+  },
+  icon: const Icon(
+    Icons.arrow_back_ios_new,
+    size: 20,
+    color: grayText,
+  ),
+),
         title: const Text(
           'Personal Info',
           style: TextStyle(
@@ -349,7 +351,7 @@ class ProfileInformationView extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: _buildBottomNavigationBar(),
+      // bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
 

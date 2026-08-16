@@ -41,7 +41,7 @@ class ProfileInformationController extends GetxController {
   }
 
   void onBackButtonPressed() {
-    Get.back(result: null);
+    Get.back();
   }
 
   void cancelChanges() {

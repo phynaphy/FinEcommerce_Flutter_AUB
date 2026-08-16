@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_ecommerce/screen/change&forget_password/change_password_view.dart';
+import 'package:flutter_application_ecommerce/screen/change&forget_password/email_input_view.dart';
+
 import 'package:flutter_application_ecommerce/screen/login_screen/login_screen_view.dart';
+import 'package:flutter_application_ecommerce/screen/profile_information/profile_information_view.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 
 class ProfileScreenView extends StatefulWidget {
-  const ProfileScreenView({super.key});
+  final String email;
+  const ProfileScreenView({ super.key,  required this.email,});
 
   @override
   State<ProfileScreenView> createState() => _ProfileScreenViewState();
@@ -78,9 +82,10 @@ class _ProfileScreenViewState extends State<ProfileScreenView> {
               _buildMenuTile(
                 icon: Icons.person_outline_rounded,
                 title: 'Personal Information',
+
                 subtitle: 'Update your details and personal data',
                 onTap: () {
-                  Get.offNamed('/profile-information');
+                 Get.to(()=> ProfileInformationView());
                 },
               ),
               _buildCustomDivider(),
@@ -123,7 +128,7 @@ class _ProfileScreenViewState extends State<ProfileScreenView> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ChangePasswordView(),
+                      builder: (context) => EmailInputView(),
                     ),
                   );
                 },
@@ -185,81 +190,81 @@ class _ProfileScreenViewState extends State<ProfileScreenView> {
       ),
 
       // 7. Enhanced Bottom Navigation Bar
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.06),
-              blurRadius: 20,
-              offset: const Offset(0, -4),
-            ),
-          ],
-        ),
-        child: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: (index) => setState(() => _currentIndex = index),
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.white,
-          elevation: 0,
-          selectedItemColor: const Color(0xFF0369A1),
-          unselectedItemColor: const Color(0xFF94A3B8),
-          selectedLabelStyle: const TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 11,
-          ),
-          unselectedLabelStyle: const TextStyle(
-            fontWeight: FontWeight.w500,
-            fontSize: 11,
-          ),
-          items: [
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
-              activeIcon: Icon(Icons.home_rounded),
-              label: 'Home',
-            ),
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.grid_view_outlined),
-              activeIcon: Icon(Icons.grid_view_rounded),
-              label: 'Categories',
-            ),
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_cart_outlined),
-              activeIcon: Icon(Icons.shopping_cart_rounded),
-              label: 'Cart',
-            ),
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.receipt_long_outlined),
-              activeIcon: Icon(Icons.receipt_long_rounded),
-              label: 'Orders',
-            ),
-            BottomNavigationBarItem(
-              icon: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF0369A1), Color(0xFF0F172A)],
-                  ),
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFF0369A1).withOpacity(0.35),
-                      blurRadius: 8,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: const Icon(
-                  Icons.person_rounded,
-                  color: Colors.white,
-                  size: 18,
-                ),
-              ),
-              label: 'Profile',
-            ),
-          ],
-        ),
-      ),
+      // bottomNavigationBar: Container(
+      //   decoration: BoxDecoration(
+      //     color: Colors.white,
+      //     boxShadow: [
+      //       BoxShadow(
+      //         color: Colors.black.withOpacity(0.06),
+      //         blurRadius: 20,
+      //         offset: const Offset(0, -4),
+      //       ),
+      //     ],
+      //   ),
+      //   child: BottomNavigationBar(
+      //     currentIndex: _currentIndex,
+      //     onTap: (index) => setState(() => _currentIndex = index),
+      //     type: BottomNavigationBarType.fixed,
+      //     backgroundColor: Colors.white,
+      //     elevation: 0,
+      //     selectedItemColor: const Color(0xFF0369A1),
+      //     unselectedItemColor: const Color(0xFF94A3B8),
+      //     selectedLabelStyle: const TextStyle(
+      //       fontWeight: FontWeight.w600,
+      //       fontSize: 11,
+      //     ),
+      //     unselectedLabelStyle: const TextStyle(
+      //       fontWeight: FontWeight.w500,
+      //       fontSize: 11,
+      //     ),
+      //     items: [
+      //       const BottomNavigationBarItem(
+      //         icon: Icon(Icons.home_outlined),
+      //         activeIcon: Icon(Icons.home_rounded),
+      //         label: 'Home',
+      //       ),
+      //       const BottomNavigationBarItem(
+      //         icon: Icon(Icons.grid_view_outlined),
+      //         activeIcon: Icon(Icons.grid_view_rounded),
+      //         label: 'Categories',
+      //       ),
+      //       const BottomNavigationBarItem(
+      //         icon: Icon(Icons.shopping_cart_outlined),
+      //         activeIcon: Icon(Icons.shopping_cart_rounded),
+      //         label: 'Cart',
+      //       ),
+      //       const BottomNavigationBarItem(
+      //         icon: Icon(Icons.receipt_long_outlined),
+      //         activeIcon: Icon(Icons.receipt_long_rounded),
+      //         label: 'Orders',
+      //       ),
+      //       BottomNavigationBarItem(
+      //         icon: Container(
+      //           padding: const EdgeInsets.all(8),
+      //           decoration: BoxDecoration(
+      //             gradient: const LinearGradient(
+      //               colors: [Color(0xFF0369A1), Color(0xFF0F172A)],
+      //             ),
+      //             shape: BoxShape.circle,
+      //             boxShadow: [
+      //               BoxShadow(
+      //                 color: const Color(0xFF0369A1).withOpacity(0.35),
+      //                 blurRadius: 8,
+      //                 offset: const Offset(0, 3),
+      //               ),
+      //             ],
+      //           ),
+      //           child: const Icon(
+      //             Icons.person_rounded,
+      //             color: Colors.white,
+      //             size: 18,
+      //           ),
+      //         ),
+      //         label: 'Profile',
+      //       ),
+      //     ],
+      //   ),
+      // ),
     );
   }
 

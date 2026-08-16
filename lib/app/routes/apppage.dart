@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_application_ecommerce/app/routes/approutes.dart';
+import 'package:flutter_application_ecommerce/screen/button_navigation/nav_button.dart';
 import 'package:flutter_application_ecommerce/screen/category/category_binding.dart';
 import 'package:flutter_application_ecommerce/screen/category/category_view.dart';
 import 'package:flutter_application_ecommerce/screen/category_beauty/category_beauty_binding.dart';
@@ -25,7 +27,7 @@ import 'package:flutter_application_ecommerce/screen/register_screen/register_sc
 import 'package:flutter_application_ecommerce/screen/splash_screen.dart';
 import 'package:get/get.dart';
 import 'package:flutter_application_ecommerce/screen/cart/cart_binding.dart';
-import 'package:flutter_application_ecommerce/screen/cart/cart_view.dart';
+import 'package:flutter_application_ecommerce/screen/cart/cart_view.dart' hide CategoryView;
 
 class AppPages {
   static final routes = [
@@ -33,8 +35,18 @@ class AppPages {
     GetPage(name: AppRoutes.splash2, page: () => SecondSplash()),
     GetPage(name: AppRoutes.login, page: () => LoginScreenView()),
     GetPage(name: AppRoutes.register, page: () => RegisterScreenView()),
-    GetPage(name: AppRoutes.homescreen, page: () => HomescreenView()),
-    GetPage(name: AppRoutes.profile, page: () => ProfileScreenView()),
+     GetPage(
+      name: AppRoutes.homescreen,
+      page: () => HomeScreenView(
+        email: Get.arguments ?? '',
+      ),
+    ),
+    GetPage(
+  name: AppRoutes.profile,
+  page: () => ProfileScreenView(
+    email: Get.arguments ?? '',
+  ),
+),
     GetPage(
       name: AppRoutes.profileinformation,
       page: () => const ProfileInformationView(),
@@ -42,41 +54,13 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.category,
-      page: () => const CategoryView(),
+      page: () => CategoriesScreen(),
       binding: CategoryBinding(),
     ),
-    GetPage(
-  name: AppRoutes.cart, 
-  page: () => const CartView(),
-  binding: CartBinding(),
-    ),
-
-  GetPage(
-      name: AppRoutes.featuredCollections,
-      page: () => const FeaturedCollectionsView(),
-      binding: FeaturedCollectionsBinding(),   
-),
-GetPage(
-  name: AppRoutes.categoryProducts,
-  page: () => const CategoryProductsView(),
-  binding: BindingsBuilder(() {
-    Get.lazyPut<CategoryProductsController>(() => CategoryProductsController());
-  }),
-),
-GetPage(
-  name: AppRoutes.categoryFashion,
-  page: () => const CategoryFashionView(),
-  binding: CategoryFashionBinding(),
-),
-GetPage(
-  name: AppRoutes.categoryKitchen,
-  page: () => const CategoryKitchenView(),
-  binding: CategoryKitchenBinding(),
-),
-GetPage(
-  name: AppRoutes.categoryBeauty,
-  page: () => const CategoryBeautyView(),
-  binding: CategoryBeautyBinding(),
-),
+//     GetPage(
+//   name: AppRoutes.cart, // ឬឈ្មោះ route របស់អ្នក
+//   page: () => const Cartv
+//   binding: CartBinding(),
+// ),
   ];
 }
