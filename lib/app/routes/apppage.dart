@@ -6,14 +6,17 @@ import 'package:flutter_application_ecommerce/screen/category/category_view.dart
 import 'package:flutter_application_ecommerce/screen/home_screen/homescreen_view.dart';
 import 'package:flutter_application_ecommerce/screen/home_screen/second_splash.dart';
 import 'package:flutter_application_ecommerce/screen/login_screen/login_screen_view.dart';
+import 'package:flutter_application_ecommerce/screen/profile_information/profile_information_binding.dart';
 
 import 'package:flutter_application_ecommerce/screen/profile_information/profile_information_view.dart';
-
+// import 'package:flutter_application_ecommerce/screen/profile_informations/profile_information_binding.dart';
 
 import 'package:flutter_application_ecommerce/screen/profile_screen/profile_screen_view.dart';
 import 'package:flutter_application_ecommerce/screen/register_screen/register_screen_view.dart';
 import 'package:flutter_application_ecommerce/screen/splash_screen.dart';
 import 'package:get/get.dart';
+import 'package:flutter_application_ecommerce/screen/cart/cart_binding.dart';
+import 'package:flutter_application_ecommerce/screen/cart/cart_view.dart' hide CategoryView;
 
 class AppPages {
   static final routes = [
@@ -35,38 +38,18 @@ class AppPages {
 ),
     GetPage(
       name: AppRoutes.profileinformation,
-      page: () => ProfileInformationView(),
-     
+      page: () => const ProfileInformationView(),
+      binding: ProfileInformationBinding(),
     ),
-
     GetPage(
       name: AppRoutes.category,
-      page: () => const CategoryView(),
-      // binding: CategoryBinding(),
-      
+      page: () => CategoriesScreen(),
+      binding: CategoryBinding(),
     ),
 //     GetPage(
-//   name: AppRoutes.nav_button,
-//   page: () => Scaffold(
-//     body: Center(
-//       child: Row(
-//         children: [
-//           NavButton(
-//             onTap: (index) {
-//               debugPrint('Tapped index: $index');
-//             },
-//             position: 0.0,
-//             length: 5,
-//             index: 0,
-//             child: const Icon(
-//               Icons.home,
-//               size: 30,
-//             ),
-//           ),
-//         ],
-//       ),
-//     ),
-//   ),
+//   name: AppRoutes.cart, // ឬឈ្មោះ route របស់អ្នក
+//   page: () => const Cartv
+//   binding: CartBinding(),
 // ),
   ];
 }

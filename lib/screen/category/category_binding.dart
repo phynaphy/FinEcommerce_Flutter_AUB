@@ -4,6 +4,8 @@ import 'package:flutter_application_ecommerce/screen/category/category_controlle
 class CategoryBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => CategoryController());
+    Get.lazyPut<CategoryController>(
+      () => CategoryController(),
+    );
   }
 }
