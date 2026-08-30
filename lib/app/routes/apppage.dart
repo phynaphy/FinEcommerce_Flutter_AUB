@@ -3,6 +3,7 @@ import 'package:flutter_application_ecommerce/app/routes/approutes.dart';
 import 'package:flutter_application_ecommerce/screen/button_navigation/nav_button.dart';
 import 'package:flutter_application_ecommerce/screen/category/category_binding.dart';
 import 'package:flutter_application_ecommerce/screen/category/category_view.dart';
+import 'package:flutter_application_ecommerce/screen/electronic_screen/eletronic_view.dart';
 import 'package:flutter_application_ecommerce/screen/home_screen/homescreen_view.dart';
 import 'package:flutter_application_ecommerce/screen/home_screen/second_splash.dart';
 import 'package:flutter_application_ecommerce/screen/login_screen/login_screen_view.dart';
@@ -46,6 +47,7 @@ class AppPages {
       page: () => CategoriesScreen(),
       binding: CategoryBinding(),
     ),
+    GetPage(name: AppRoutes.eletronic, page: ()=>EletronicView())
 //     GetPage(
 //   name: AppRoutes.cart, // ឬឈ្មោះ route របស់អ្នក
 //   page: () => const Cartv

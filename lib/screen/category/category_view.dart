@@ -471,6 +471,7 @@
 //   }
 // }
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class CategoriesScreen extends StatefulWidget {
   const CategoriesScreen({super.key});
@@ -482,6 +483,10 @@ class CategoriesScreen extends StatefulWidget {
 class _CategoriesScreenState extends State<CategoriesScreen> {
   int selectedBottomIndex = 1;
 
+  // ============================================================
+  // FEATURED CATEGORIES
+  // ============================================================
+
   final List<FeaturedCategory> featuredCategories = [
     FeaturedCategory(
       title: 'Tech Innovations',
@@ -489,7 +494,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       imageUrl:
           'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=900&q=85',
       icon: Icons.devices_rounded,
-      iconColor: Color(0xFF2563EB),
+      iconColor: const Color(0xFF2563EB),
     ),
     FeaturedCategory(
       title: 'Corporate Style',
@@ -497,7 +502,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       imageUrl:
           'https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=900&q=85',
       icon: Icons.checkroom_rounded,
-      iconColor: Color(0xFF7C3AED),
+      iconColor: const Color(0xFF7C3AED),
     ),
     FeaturedCategory(
       title: 'Elite Living',
@@ -505,7 +510,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       imageUrl:
           'https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=900&q=85',
       icon: Icons.home_rounded,
-      iconColor: Color(0xFF22C55E),
+      iconColor: const Color(0xFF22C55E),
     ),
     FeaturedCategory(
       title: 'Luxury Details',
@@ -513,9 +518,13 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       imageUrl:
           'https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&w=900&q=85',
       icon: Icons.diamond_rounded,
-      iconColor: Color(0xFFF59E0B),
+      iconColor: const Color(0xFFF59E0B),
     ),
   ];
+
+  // ============================================================
+  // ALL CATEGORIES
+  // ============================================================
 
   final List<ShopCategory> categories = [
     ShopCategory(
@@ -523,37 +532,41 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       products: '1,240 Products',
       imageUrl:
           'https://images.unsplash.com/photo-1526738549149-8e07eca6c147?auto=format&fit=crop&w=300&q=80',
-      backgroundColor: Color(0xFFE0EDFF),
+      backgroundColor: const Color(0xFFE0EDFF),
     ),
     ShopCategory(
       title: 'Fashion & Apparel',
       products: '2,840 Products',
       imageUrl:
           'https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=300&q=80',
-      backgroundColor: Color(0xFFF0E7FF),
+      backgroundColor: const Color(0xFFF0E7FF),
     ),
     ShopCategory(
       title: 'Home & Kitchen',
       products: '892 Products',
       imageUrl:
           'https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&fit=crop&w=300&q=80',
-      backgroundColor: Color(0xFFE2F8ED),
+      backgroundColor: const Color(0xFFE2F8ED),
     ),
     ShopCategory(
       title: 'Beauty & Health',
       products: '1,123 Products',
       imageUrl:
           'https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=300&q=80',
-      backgroundColor: Color(0xFFFFE8E3),
+      backgroundColor: const Color(0xFFFFE8E3),
     ),
     ShopCategory(
       title: 'Sports & Outdoors',
       products: '654 Products',
       imageUrl:
           'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=300&q=80',
-      backgroundColor: Color(0xFFE3F3FA),
+      backgroundColor: const Color(0xFFE3F3FA),
     ),
   ];
+
+  // ============================================================
+  // BUILD
+  // ============================================================
 
   @override
   Widget build(BuildContext context) {
@@ -568,18 +581,22 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               child: CustomScrollView(
                 physics: const BouncingScrollPhysics(),
                 slivers: [
+                  // Header
                   SliverToBoxAdapter(
                     child: _buildHeader(),
                   ),
 
+                  // Search
                   SliverToBoxAdapter(
                     child: _buildSearchBar(),
                   ),
 
+                  // Featured Header
                   SliverToBoxAdapter(
                     child: _buildFeaturedHeader(),
                   ),
 
+                  // Featured Categories
                   SliverPadding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     sliver: SliverGrid(
@@ -601,10 +618,12 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                     ),
                   ),
 
+                  // All Categories Header
                   SliverToBoxAdapter(
                     child: _buildAllCategoriesHeader(),
                   ),
 
+                  // All Categories
                   SliverPadding(
                     padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                     sliver: SliverList(
@@ -621,8 +640,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 ],
               ),
             ),
-
-          
           ],
         ),
       ),
@@ -642,8 +659,11 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             icon: Icons.menu_rounded,
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Menu clicked'),
+                SnackBar(
+                  content: Text(
+                    'Menu clicked',
+                    style: GoogleFonts.spaceGrotesk(),
+                  ),
                 ),
               );
             },
@@ -651,18 +671,20 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
           const SizedBox(width: 16),
 
-          const Expanded(
+          // Title
+          Expanded(
             child: Text(
               'Categories',
-              style: TextStyle(
+              style: GoogleFonts.spaceGrotesk(
                 fontSize: 28,
                 fontWeight: FontWeight.w800,
-                color: Color(0xFF101B3A),
+                color: const Color(0xFF101B3A),
                 letterSpacing: -0.7,
               ),
             ),
           ),
 
+          // Search
           _iconButton(
             icon: Icons.search_rounded,
             onTap: () {},
@@ -670,6 +692,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
           const SizedBox(width: 8),
 
+          // Cart
           Stack(
             clipBehavior: Clip.none,
             children: [
@@ -688,10 +711,10 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                     color: Color(0xFFEF4444),
                     shape: BoxShape.circle,
                   ),
-                  child: const Center(
+                  child: Center(
                     child: Text(
                       '3',
-                      style: TextStyle(
+                      style: GoogleFonts.spaceGrotesk(
                         color: Colors.white,
                         fontSize: 10,
                         fontWeight: FontWeight.w800,
@@ -706,6 +729,10 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       ),
     );
   }
+
+  // ============================================================
+  // ICON BUTTON
+  // ============================================================
 
   Widget _iconButton({
     required IconData icon,
@@ -741,7 +768,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   }
 
   // ============================================================
-  // SEARCH
+  // SEARCH BAR
   // ============================================================
 
   Widget _buildSearchBar() {
@@ -764,12 +791,18 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 ],
               ),
               child: TextField(
+                style: GoogleFonts.spaceGrotesk(
+                  fontSize: 14,
+                  color: const Color(0xFF14213D),
+                  fontWeight: FontWeight.w500,
+                ),
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: 'Search products in categories...',
-                  hintStyle: const TextStyle(
-                    color: Color(0xFF8A94A8),
+                  hintStyle: GoogleFonts.spaceGrotesk(
+                    color: const Color(0xFF8A94A8),
                     fontSize: 14,
+                    fontWeight: FontWeight.w500,
                   ),
                   prefixIcon: const Icon(
                     Icons.search_rounded,
@@ -785,6 +818,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
           const SizedBox(width: 12),
 
+          // Filter Button
           Container(
             width: 58,
             height: 58,
@@ -821,23 +855,23 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 14),
       child: Row(
         children: [
-          const Expanded(
+          Expanded(
             child: Text(
               'Featured Collections',
-              style: TextStyle(
+              style: GoogleFonts.spaceGrotesk(
                 fontSize: 21,
                 fontWeight: FontWeight.w800,
-                color: Color(0xFF101B3A),
+                color: const Color(0xFF101B3A),
               ),
             ),
           ),
 
           GestureDetector(
             onTap: () {},
-            child: const Text(
+            child: Text(
               'View All',
-              style: TextStyle(
-                color: Color(0xFF145CE6),
+              style: GoogleFonts.spaceGrotesk(
+                color: const Color(0xFF145CE6),
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
               ),
@@ -872,6 +906,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           borderRadius: BorderRadius.circular(20),
           child: Stack(
             children: [
+              // Image
               Positioned.fill(
                 child: Image.network(
                   category.imageUrl,
@@ -888,7 +923,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 ),
               ),
 
-              // Dark gradient
+              // Dark Gradient
               Positioned.fill(
                 child: DecoratedBox(
                   decoration: BoxDecoration(
@@ -910,7 +945,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 ),
               ),
 
-              // Category icon
+              // Category Icon
               Positioned(
                 left: 14,
                 top: 14,
@@ -947,7 +982,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                       category.title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: GoogleFonts.spaceGrotesk(
                         color: Colors.white,
                         fontSize: 16,
                         fontWeight: FontWeight.w800,
@@ -960,7 +995,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                       category.subtitle,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
+                      style: GoogleFonts.spaceGrotesk(
                         color: Colors.white.withOpacity(0.9),
                         fontSize: 11,
                         fontWeight: FontWeight.w500,
@@ -1000,14 +1035,14 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   // ============================================================
 
   Widget _buildAllCategoriesHeader() {
-    return const Padding(
-      padding: EdgeInsets.fromLTRB(20, 30, 20, 14),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 30, 20, 14),
       child: Text(
         'All Categories',
-        style: TextStyle(
+        style: GoogleFonts.spaceGrotesk(
           fontSize: 21,
           fontWeight: FontWeight.w800,
-          color: Color(0xFF101B3A),
+          color: const Color(0xFF101B3A),
         ),
       ),
     );
@@ -1042,6 +1077,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             padding: const EdgeInsets.all(10),
             child: Row(
               children: [
+                // Image
                 Container(
                   width: 62,
                   height: 62,
@@ -1067,16 +1103,17 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
                 const SizedBox(width: 15),
 
+                // Category Information
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         category.title,
-                        style: const TextStyle(
+                        style: GoogleFonts.spaceGrotesk(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
-                          color: Color(0xFF14213D),
+                          color: const Color(0xFF14213D),
                         ),
                       ),
 
@@ -1084,9 +1121,9 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
                       Text(
                         category.products,
-                        style: const TextStyle(
+                        style: GoogleFonts.spaceGrotesk(
                           fontSize: 12,
-                          color: Color(0xFF7B8497),
+                          color: const Color(0xFF7B8497),
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -1094,6 +1131,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                   ),
                 ),
 
+                // Arrow Button
                 Container(
                   width: 38,
                   height: 38,
@@ -1116,12 +1154,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   }
 
   // ============================================================
-  // BOTTOM NAVIGATION
+  // BOTTOM NAVIGATION ITEM
   // ============================================================
-
- 
-
-    
 
   Widget _bottomNavItem({
     required IconData icon,
@@ -1167,7 +1201,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
             Text(
               label,
-              style: TextStyle(
+              style: GoogleFonts.spaceGrotesk(
                 fontSize: 10.5,
                 fontWeight:
                     isSelected ? FontWeight.w700 : FontWeight.w500,
@@ -1195,7 +1229,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   }
 
   // ============================================================
-  // NAVIGATION
+  // BOTTOM NAVIGATION
   // ============================================================
 
   void _handleBottomNavigation(int index) {
@@ -1222,11 +1256,19 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     }
   }
 
+  // ============================================================
+  // OPEN CATEGORY
+  // ============================================================
+
   void _openCategory(String categoryName) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
           '$categoryName selected',
+          style: GoogleFonts.spaceGrotesk(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
@@ -1238,7 +1280,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 }
 
 // ============================================================
-// MODELS
+// FEATURED CATEGORY MODEL
 // ============================================================
 
 class FeaturedCategory {
@@ -1256,6 +1298,10 @@ class FeaturedCategory {
     required this.iconColor,
   });
 }
+
+// ============================================================
+// SHOP CATEGORY MODEL
+// ============================================================
 
 class ShopCategory {
   final String title;

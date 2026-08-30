@@ -171,6 +171,7 @@
 //   }
 // }
 import 'package:flutter/material.dart';
+import 'package:flutter_application_ecommerce/app/routes/approutes.dart';
 import 'package:get/get.dart';
 
 // Screen Imports
@@ -275,13 +276,17 @@ class _HomeScreenViewState extends State<HomeScreenView> {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
-          HomeBanners(),
-          SizedBox(height: 24),
-          CategoriesSection(),
-          SizedBox(height: 24),
-          RecommendedProducts(),
-          SizedBox(height: 20),
+        children: [
+          const HomeBanners(),
+          const SizedBox(height: 24),
+          CategoriesSection(
+  onElectronicsTap: () {
+    Get.toNamed(AppRoutes.eletronic);
+  },
+),
+          const SizedBox(height: 24),
+          const RecommendedProducts(),
+          const SizedBox(height: 20),
         ],
       ),
     );
