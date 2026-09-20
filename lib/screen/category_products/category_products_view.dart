@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_ecommerce/screen/product_detail/product_detail_screen.dart';
 import 'package:get/get.dart';
 import 'category_products_controller.dart';
 
@@ -59,7 +60,12 @@ class CategoryProductsView extends StatelessWidget {
   }
 
   Widget _buildProductCard(ProductItem item) {
-    return Container(
+  return GestureDetector(
+    onTap: () {
+      // Navigate to the ProductDetailView and pass the selected product item
+      Get.to(() => const ProductDetailScreen(), arguments: item);
+    },
+    child: Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -124,6 +130,7 @@ class CategoryProductsView extends StatelessWidget {
           ),
         ],
       ),
-    );
+    ),
+  );
   }
 }

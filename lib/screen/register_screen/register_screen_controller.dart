@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_ecommerce/api/auth_service.dart';
 
 import 'package:flutter_application_ecommerce/api/request_service/register_request.dart';
+import 'package:flutter_application_ecommerce/screen/home_screen/homescreen_view.dart';
+import 'package:get/get.dart';
 
 class RegisterScreenController {
   final fullnameController = TextEditingController();
@@ -31,6 +33,11 @@ class RegisterScreenController {
 
     if (response.statusCode >= 200 &&
         response.statusCode < 300) {
+          Get.offAll(
+          () => HomeScreenView(
+            email: emailController.text,
+          ),
+        );
       print("Registration successful!");
     } else {
       print("Registration failed!");

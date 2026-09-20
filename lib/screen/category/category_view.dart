@@ -470,8 +470,262 @@
 //     );
 //   }
 // }
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+ import 'package:flutter/material.dart';
+import 'package:flutter_application_ecommerce/screen/category_products/category_products_view.dart';
+import 'package:flutter_application_ecommerce/screen/product_detail/product_detail_screen.dart';
+// import 'product_detail_screen.dart'; // Import your detail screen file
+
+
+
+
+class Cat extends StatefulWidget {
+  final String categoryName;
+
+  const Cat({super.key, required this.categoryName});
+
+  @override
+  State<Cat> createState() => _CatState();
+}
+
+class _CatState extends State<Cat> {
+  final List<Map<String, dynamic>> sampleProducts = [
+    {
+      'brand': 'TECHPRO',
+      'title': 'Wireless Headphones',
+      'rating': '4.9',
+      'reviews': '(1.2k)',
+      'price': '\$99.99',
+      'oldPrice': '\$129.99',
+      'discount': '-23%',
+      'imageUrl':
+          'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=500&q=80',
+      'isFavorite': false,
+    },
+    {
+      'brand': 'AUDIOPURE',
+      'title': 'Smart Watch',
+      'rating': '4.8',
+      'reviews': '(850)',
+      'price': '\$199.99',
+      'oldPrice': null,
+      'discount': null,
+      'imageUrl':
+          'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=500&q=80',
+      'isFavorite': false,
+    },
+    {
+      'brand': 'CAMPRO',
+      'title': 'Digital Camera',
+      'rating': '4.7',
+      'reviews': '(420)',
+      'price': '\$499.99',
+      'oldPrice': '\$599.99',
+      'discount': '-16%',
+      'imageUrl':
+          'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=500&q=80',
+      'isFavorite': false,
+    },
+    {
+      'brand': 'SOUNDMAX',
+      'title': 'Portable Speaker',
+      'rating': '4.6',
+      'reviews': '(310)',
+      'price': '\$79.99',
+      'oldPrice': null,
+      'discount': null,
+      'imageUrl':
+          'https://images.unsplash.com/photo-1545454675-3531b543be5d?auto=format&fit=crop&w=500&q=80',
+      'isFavorite': false,
+    },
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF7F9FC),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: Color(0xFF101B3A),
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          widget.categoryName,
+          style: const TextStyle(
+            color: Color(0xFF101B3A),
+            fontWeight: FontWeight.w800,
+            fontSize: 20,
+          ),
+        ),
+        centerTitle: true,
+      ),
+      body: GridView.builder(
+        padding: const EdgeInsets.all(16),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+          childAspectRatio: 0.70,
+        ),
+        itemCount: sampleProducts.length,
+        itemBuilder: (context, index) {
+          final product = sampleProducts[index];
+          final isFavorite = product['isFavorite'] ?? false;
+ return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>ProductDetailScreen(product: product),
+                ),
+              );
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Stack(
+                      children: [
+                        Positioned.fill(
+                          child: ClipRRect(
+                            borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(16),
+                            ),
+                            child: Image.network(
+                              product['imageUrl']!,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Container(
+                                color: Colors.grey[200],
+                                child: const Icon(
+                                  Icons.image_not_supported,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          top: 8,
+                          right: 8,
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                sampleProducts[index]['isFavorite'] =
+                                    !isFavorite;
+                              });
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.9),
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 4,
+                                  ),
+                                ],
+                              ),
+                              child: Icon(
+                                isFavorite
+                                    ? Icons.favorite_rounded
+                                    : Icons.favorite_border_rounded,
+                                size: 18,
+                                color: isFavorite ? Colors.red : Colors.grey[700],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          product['title']!,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            color: Color(0xFF101B3A),
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 6),
+ Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              product['price']!,
+                              style: const TextStyle(
+                                color: Color(0xFF145CE6),
+                                fontWeight: FontWeight.w700,
+                                fontSize: 15,
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      '${product['title']} added to cart!',
+                                    ),
+                                    duration: const Duration(seconds: 1),
+                                  ),
+                                );
+                              },
+                              borderRadius: BorderRadius.circular(8),
+                              child: Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF145CE6),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Icon(
+                                  Icons.add_shopping_cart_rounded,
+                                  size: 16,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+// ============================================================
+// MAIN CATEGORIES SCREEN
+// ============================================================
 
 class CategoriesScreen extends StatefulWidget {
   const CategoriesScreen({super.key});
@@ -482,10 +736,6 @@ class CategoriesScreen extends StatefulWidget {
 
 class _CategoriesScreenState extends State<CategoriesScreen> {
   int selectedBottomIndex = 1;
-
-  // ============================================================
-  // FEATURED CATEGORIES
-  // ============================================================
 
   final List<FeaturedCategory> featuredCategories = [
     FeaturedCategory(
@@ -521,12 +771,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       iconColor: const Color(0xFFF59E0B),
     ),
   ];
-
-  // ============================================================
-  // ALL CATEGORIES
-  // ============================================================
-
-  final List<ShopCategory> categories = [
+ final List<ShopCategory> categories = [
     ShopCategory(
       title: 'Electronics',
       products: '1,240 Products',
@@ -564,10 +809,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     ),
   ];
 
-  // ============================================================
-  // BUILD
-  // ============================================================
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -581,18 +822,9 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               child: CustomScrollView(
                 physics: const BouncingScrollPhysics(),
                 slivers: [
-                  SliverToBoxAdapter(
-                    child: _buildHeader(),
-                  ),
-
-                  SliverToBoxAdapter(
-                    child: _buildSearchBar(),
-                  ),
-
-                  SliverToBoxAdapter(
-                    child: _buildFeaturedHeader(),
-                  ),
-
+                  SliverToBoxAdapter(child: _buildHeader()),
+                  SliverToBoxAdapter(child: _buildSearchBar()),
+                  SliverToBoxAdapter(child: _buildFeaturedHeader()),
                   SliverPadding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     sliver: SliverGrid(
@@ -607,11 +839,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                       ),
                     ),
                   ),
-
-                  SliverToBoxAdapter(
-                    child: _buildAllCategoriesHeader(),
-                  ),
-
+                  SliverToBoxAdapter(child: _buildAllCategoriesHeader()),
                   SliverPadding(
                     padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                     sliver: SliverList(
@@ -632,8 +860,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   // ============================================================
   // HEADER
   // ============================================================
-
-  Widget _buildHeader() {
+ Widget _buildHeader() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
       child: Row(
@@ -641,34 +868,25 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           _iconButton(
             icon: Icons.menu_rounded,
             onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Menu clicked'),
-                ),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: Text('Menu clicked')));
             },
           ),
           const SizedBox(width: 16),
-
-          Expanded(
+          const Expanded(
             child: Text(
               'Categories',
-              style: GoogleFonts.spaceGrotesk(
+              style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.w800,
-                color: const Color(0xFF101B3A),
+                color: Color(0xFF101B3A),
                 letterSpacing: -0.7,
               ),
             ),
           ),
-
-          _iconButton(
-            icon: Icons.search_rounded,
-            onTap: () {},
-          ),
-
+          _iconButton(icon: Icons.search_rounded, onTap: () {}),
           const SizedBox(width: 8),
-
           Stack(
             clipBehavior: Clip.none,
             children: [
@@ -683,10 +901,10 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                     color: Color(0xFFEF4444),
                     shape: BoxShape.circle,
                   ),
-                  child: Center(
+                  child: const Center(
                     child: Text(
                       '3',
-                      style: GoogleFonts.spaceGrotesk(
+                      style: TextStyle(
                         color: Colors.white,
                         fontSize: 10,
                         fontWeight: FontWeight.w800,
@@ -701,10 +919,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       ),
     );
   }
-
-  // ============================================================
-  // ICON BUTTON
-  // ============================================================
 
   Widget _iconButton({required IconData icon, required VoidCallback onTap}) {
     return Material(
@@ -733,10 +947,9 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   }
 
   // ============================================================
-  // SEARCH BAR
+  // SEARCH
   // ============================================================
-
-  Widget _buildSearchBar() {
+ Widget _buildSearchBar() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
       child: Row(
@@ -755,15 +968,12 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                   ),
                 ],
               ),
-              child: TextField(
+              child: const TextField(
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: 'Search products in categories...',
-                  hintStyle: const TextStyle(
-                    color: Color(0xFF8A94A8),
-                    fontSize: 14,
-                  ),
-                  prefixIcon: const Icon(
+                  hintStyle: TextStyle(color: Color(0xFF8A94A8), fontSize: 14),
+                  prefixIcon: Icon(
                     Icons.search_rounded,
                     color: Color(0xFF69758B),
                   ),
@@ -773,7 +983,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             ),
           ),
           const SizedBox(width: 12),
-
           Container(
             width: 58,
             height: 58,
@@ -807,22 +1016,22 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 14),
       child: Row(
         children: [
-          Expanded(
+          const Expanded(
             child: Text(
               'Featured Collections',
-              style: GoogleFonts.spaceGrotesk(
+              style: TextStyle(
                 fontSize: 21,
                 fontWeight: FontWeight.w800,
-                color: const Color(0xFF101B3A),
+                color: Color(0xFF101B3A),
               ),
             ),
           ),
           GestureDetector(
             onTap: () {},
-            child: Text(
+            child: const Text(
               'View All',
-              style: GoogleFonts.spaceGrotesk(
-                color: const Color(0xFF145CE6),
+              style: TextStyle(
+                color: Color(0xFF145CE6),
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
               ),
@@ -836,8 +1045,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   // ============================================================
   // FEATURED CARD
   // ============================================================
-
-  Widget _buildFeaturedCard(FeaturedCategory category) {
+ Widget _buildFeaturedCard(FeaturedCategory category) {
     return GestureDetector(
       onTap: () {
         _openCategory(category.title);
@@ -857,7 +1065,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           borderRadius: BorderRadius.circular(20),
           child: Stack(
             children: [
-              // Image
               Positioned.fill(
                 child: Image.network(
                   category.imageUrl,
@@ -873,8 +1080,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                   },
                 ),
               ),
-
-              // Dark gradient
               Positioned.fill(
                 child: DecoratedBox(
                   decoration: BoxDecoration(
@@ -891,8 +1096,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                   ),
                 ),
               ),
-
-              // Category icon
               Positioned(
                 left: 14,
                 top: 14,
@@ -923,7 +1126,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                       category.title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.spaceGrotesk(
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
                         fontWeight: FontWeight.w800,
@@ -934,7 +1137,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                       category.subtitle,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.spaceGrotesk(
+                      style: TextStyle(
                         color: Colors.white.withOpacity(0.9),
                         fontSize: 11,
                         fontWeight: FontWeight.w500,
@@ -972,14 +1175,14 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   // ============================================================
 
   Widget _buildAllCategoriesHeader() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 30, 20, 14),
+    return const Padding(
+      padding: EdgeInsets.fromLTRB(20, 30, 20, 14),
       child: Text(
         'All Categories',
-        style: GoogleFonts.spaceGrotesk(
+        style: TextStyle(
           fontSize: 21,
           fontWeight: FontWeight.w800,
-          color: const Color(0xFF101B3A),
+          color: Color(0xFF101B3A),
         ),
       ),
     );
@@ -1014,7 +1217,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             padding: const EdgeInsets.all(10),
             child: Row(
               children: [
-                // Image
                 Container(
                   width: 62,
                   height: 62,
@@ -1038,32 +1240,30 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                   ),
                 ),
                 const SizedBox(width: 15),
-
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         category.title,
-                        style: GoogleFonts.spaceGrotesk(
+                        style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
-                          color: const Color(0xFF14213D),
+                          color: Color(0xFF14213D),
                         ),
                       ),
                       const SizedBox(height: 5),
                       Text(
                         category.products,
-                        style: GoogleFonts.spaceGrotesk(
+                        style: const TextStyle(
                           fontSize: 12,
-                          color: const Color(0xFF7B8497),
+                          color: Color(0xFF7B8497),
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                     ],
                   ),
                 ),
-
                 Container(
                   width: 38,
                   height: 38,
@@ -1086,129 +1286,20 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   }
 
   // ============================================================
-  // BOTTOM NAVIGATION
+  // NAVIGATION LOGIC
   // ============================================================
-
- 
-
-    
-
-  Widget _bottomNavItem({
-    required IconData icon,
-    required IconData activeIcon,
-    required String label,
-    required int index,
-  }) {
-    final bool isSelected = selectedBottomIndex == index;
-
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          selectedBottomIndex = index;
-        });
-
-        _handleBottomNavigation(index);
-      },
-      child: SizedBox(
-        width: 70,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
-              width: isSelected ? 42 : 38,
-              height: isSelected ? 42 : 38,
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? const Color(0xFFE8F0FF)
-                    : Colors.transparent,
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Icon(
-                isSelected ? activeIcon : icon,
-                color: isSelected
-                    ? const Color(0xFF145CE6)
-                    : const Color(0xFF707A8D),
-                size: 25,
-              ),
-            ),
-
-            const SizedBox(height: 3),
-
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 10.5,
-                fontWeight:
-                    isSelected ? FontWeight.w700 : FontWeight.w500,
-                color: isSelected
-                    ? const Color(0xFF145CE6)
-                    : const Color(0xFF707A8D),
-              ),
-            ),
-
-            const SizedBox(height: 4),
-
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
-              width: isSelected ? 28 : 0,
-              height: 3,
-              decoration: BoxDecoration(
-                color: const Color(0xFF145CE6),
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // ============================================================
-  // NAVIGATION
-  // ============================================================
-
-  void _handleBottomNavigation(int index) {
-    switch (index) {
-      case 0:
-        // Navigate to Home
-        break;
-
-      case 1:
-        // Already Categories
-        break;
-
-      case 2:
-        // Navigate to Favorites
-        break;
-
-      case 3:
-        // Navigate to Orders
-        break;
-
-      case 4:
-        // Navigate to Profile
-        break;
-    }
-  }
-
-  void _openCategory(String categoryName) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          '$categoryName selected',
-        ),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+ void _openCategory(String categoryName) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CategoryProductsView(),
       ),
     );
   }
 }
 
 // ============================================================
-// FEATURED CATEGORY MODEL
+// MODELS
 // ============================================================
 
 class FeaturedCategory {
@@ -1226,10 +1317,6 @@ class FeaturedCategory {
     required this.iconColor,
   });
 }
-
-// ============================================================
-// SHOP CATEGORY MODEL
-// ============================================================
 
 class ShopCategory {
   final String title;
