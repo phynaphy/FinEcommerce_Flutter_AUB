@@ -172,6 +172,7 @@
 // }
 import 'package:flutter/material.dart';
 import 'package:flutter_application_ecommerce/app/routes/approutes.dart';
+import 'package:flutter_application_ecommerce/screen/category/categoryscreen.dart';
 import 'package:get/get.dart';
 
 // Screen Imports
@@ -258,7 +259,7 @@ class _HomeScreenViewState extends State<HomeScreenView> {
 
   List<Widget> get _screens => [
         _buildHomeContent(),
-        const CategoriesScreen(),
+        CategoriesScreen(),
         const Center(child: Text('Cart Screen')),
         const Center(child: Text('Favorites Screen')),
         ProfileScreenView(email: widget.email),

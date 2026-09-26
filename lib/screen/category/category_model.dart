@@ -1,13 +1,13 @@
 class CategoryModel {
   final int id;
   final String name;
-  final String? imageUrl;
+  final String? mainImageUrl;
   final int totalProducts;
 
   CategoryModel({
     required this.id,
     required this.name,
-    required this.imageUrl,
+    required this.mainImageUrl,
     required this.totalProducts,
   });
 
@@ -15,7 +15,7 @@ class CategoryModel {
     return CategoryModel(
       id: json['id'] ?? 0,
       name: json['name'] ?? '',
-      imageUrl: json['imageUrl'],
+      mainImageUrl: json['mainImageUrl'],
       totalProducts: json['totalProducts'] ?? 0,
     );
   }

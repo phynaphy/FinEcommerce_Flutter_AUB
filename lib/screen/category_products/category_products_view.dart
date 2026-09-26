@@ -63,7 +63,7 @@ class CategoryProductsView extends StatelessWidget {
   return GestureDetector(
     onTap: () {
       // Navigate to the ProductDetailView and pass the selected product item
-      Get.to(() => const ProductDetailScreen(), arguments: item);
+      Get.to(() => const ProductDetailScreen(product: {},), arguments: item);
     },
     child: Container(
       decoration: BoxDecoration(
