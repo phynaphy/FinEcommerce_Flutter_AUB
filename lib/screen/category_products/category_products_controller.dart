@@ -1,12 +1,14 @@
 import 'package:get/get.dart';
 
 class ProductItem {
+  final int id;
   final String title;
   final String price;
   final String imageUrl;
   final String rating;
 
   ProductItem({
+    required this.id,
     required this.title,
     required this.price,
     required this.imageUrl,
@@ -20,27 +22,27 @@ class CategoryProductsController extends GetxController {
 
   // Sample Products List
   final RxList<ProductItem> products = <ProductItem>[
-    ProductItem(
-      title: 'Wireless Headphones',
-      price: '\$199.99',
-      imageUrl: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=400&q=80',
-      rating: '4.8',
-    ),
-    ProductItem(
-      title: 'Smart Watch Series',
-      price: '\$299.00',
-      imageUrl: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=400&q=80',
-    ),
-    ProductItem(
-      title: 'Retro Camera',
-      price: '\$450.50',
-      imageUrl: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80',
-    ),
-    ProductItem(
-      title: 'Ultra Laptop',
-      price: '\$1,120.00',
-      imageUrl: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=400&q=80',
-    ),
+    // ProductItem(
+    //   title: 'Wireless Headphones',
+    //   price: '\$199.99',
+    //   imageUrl: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=400&q=80',
+    //   rating: '4.8',
+    // ),
+    // ProductItem(
+    //   title: 'Smart Watch Series',
+    //   price: '\$299.00',
+    //   imageUrl: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=400&q=80',
+    // ),
+    // ProductItem(
+    //   title: 'Retro Camera',
+    //   price: '\$450.50',
+    //   imageUrl: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80',
+    // ),
+    // ProductItem(
+    //   title: 'Ultra Laptop',
+    //   price: '\$1,120.00',
+    //   imageUrl: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=400&q=80',
+    // ),
   ].obs;
 
   @override

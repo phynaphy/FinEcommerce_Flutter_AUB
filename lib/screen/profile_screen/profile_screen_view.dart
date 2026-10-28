@@ -1,15 +1,135 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_application_ecommerce/screen/change&forget_password/change_password_view.dart';
-import 'package:flutter_application_ecommerce/screen/change&forget_password/email_input_view.dart';
+import 'dart:convert';
 
+import 'package:flutter/material.dart';
+import 'package:flutter_application_ecommerce/screen/change&forget_password/email_input_view.dart';
 import 'package:flutter_application_ecommerce/screen/login_screen/login_screen_view.dart';
 import 'package:flutter_application_ecommerce/screen/profile_information/profile_information_view.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
+class ProfileApiConfig {
+  // For Flutter Windows/Desktop or Web when Spring Boot runs on this computer:
+  static const String baseUrl = 'http://192.168.56.1:8080';
+
+  // For Android Emulator, change the line above to:
+  // static const String baseUrl = 'http://10.0.2.2:8080';
+
+  // For a physical phone, use your computer's LAN IP address instead.
+  static const String profileUrl =
+      '$baseUrl/api/v1/mobile/auth/get-profile';
+
+  static Future<String?> getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final token = prefs.getString('token') ??
+        prefs.getString('authToken') ??
+        prefs.getString('accessToken');
+
+    if (token == null || token.trim().isEmpty) {
+      return null;
+    }
+
+    return token.replaceFirst(RegExp(r'^Bearer\s+', caseSensitive: false), '');
+  }
+
+  static Future<String?> getUsername() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Prefer the username passed through GetX navigation.
+    final arguments = Get.arguments;
+
+    if (arguments is Map && arguments['username'] != null) {
+      final username = arguments['username'].toString().trim();
+
+      if (username.isNotEmpty) {
+        await prefs.setString('username', username);
+        return username;
+      }
+    }
+
+    // Use the username saved during login.
+    final savedUsername = prefs.getString('username');
+
+    if (savedUsername != null && savedUsername.trim().isNotEmpty) {
+      return savedUsername.trim();
+    }
+
+    // Fallback: try reading the username from the JWT.
+    final token = await getToken();
+
+    if (token == null) {
+      return null;
+    }
+
+    try {
+      final parts = token.split('.');
+
+      if (parts.length != 3) {
+        return null;
+      }
+
+      final normalizedPayload = base64Url.normalize(parts[1]);
+      final decodedPayload = jsonDecode(
+        utf8.decode(base64Url.decode(normalizedPayload)),
+      );
+
+      if (decodedPayload is! Map) {
+        return null;
+      }
+
+      final username = decodedPayload['username'] ??
+          decodedPayload['preferred_username'] ??
+          decodedPayload['sub'];
+
+      if (username != null && username.toString().trim().isNotEmpty) {
+        final value = username.toString().trim();
+        await prefs.setString('username', value);
+        return value;
+      }
+    } catch (e) {
+      debugPrint('Could not read username from token: $e');
+    }
+
+    return null;
+  }
+
+  static Map<String, String> getHeaders(String? token) {
+    return {
+      'Accept': 'application/json',
+      if (token != null && token.isNotEmpty)
+        'Authorization': 'Bearer $token',
+    };
+  }
+
+  static String? getImageUrl(dynamic imagePath) {
+    if (imagePath == null) {
+      return null;
+    }
+
+    final path = imagePath.toString().trim();
+
+    if (path.isEmpty) {
+      return null;
+    }
+
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      return path;
+    }
+
+    return '$baseUrl${path.startsWith('/') ? '' : '/'}$path';
+  }
+}
 
 class ProfileScreenView extends StatefulWidget {
+  // Kept optional for compatibility with existing navigation calls.
+  // Email is not displayed on this screen.
   final String email;
-  const ProfileScreenView({ super.key,  required this.email,});
+
+  const ProfileScreenView({
+    super.key,
+    this.email = '',
+  });
 
   @override
   State<ProfileScreenView> createState() => _ProfileScreenViewState();
@@ -17,7 +137,135 @@ class ProfileScreenView extends StatefulWidget {
 
 class _ProfileScreenViewState extends State<ProfileScreenView> {
   bool _biometricEnabled = true;
-  int _currentIndex = 4;
+
+  bool _isLoading = false;
+  String? _errorMessage;
+
+  String _fullName = '';
+  String? _profilePictureUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchProfile();
+  }
+
+  Future<void> fetchProfile() async {
+    if (_isLoading) return;
+
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final token = await ProfileApiConfig.getToken();
+      final username = await ProfileApiConfig.getUsername();
+
+      if (token == null) {
+        throw Exception('Your login session has expired. Please log in again.');
+      }
+
+      if (username == null || username.trim().isEmpty) {
+        throw Exception(
+          'Username was not found. Please log in again.',
+        );
+      }
+
+      final uri = Uri.parse(
+        '${ProfileApiConfig.profileUrl}/'
+        '${Uri.encodeComponent(username)}',
+      );
+
+      debugPrint('GET profile URL: $uri');
+
+      final response = await http
+          .get(
+            uri,
+            headers: ProfileApiConfig.getHeaders(token),
+          )
+          .timeout(const Duration(seconds: 20));
+
+      debugPrint('Profile API status: ${response.statusCode}');
+      debugPrint('Profile API response: ${response.body}');
+
+      if (response.statusCode == 401 || response.statusCode == 403) {
+        throw Exception(
+          'Authentication failed. Please log in again.',
+        );
+      }
+
+      if (response.statusCode == 404) {
+        throw Exception(
+          'Profile not found. Please check the username.',
+        );
+      }
+
+      if (response.statusCode != 200) {
+        throw Exception(
+          'Unable to load profile. Server status: '
+          '${response.statusCode}.',
+        );
+      }
+
+      final dynamic decoded = jsonDecode(response.body);
+
+      if (decoded is! Map) {
+        throw const FormatException(
+          'The server returned an invalid profile response.',
+        );
+      }
+
+      final data = Map<String, dynamic>.from(decoded);
+
+      if (!mounted) return;
+
+      setState(() {
+        // Only display the full name and profile picture.
+        // Other API fields are not shown in the UI.
+        _fullName = data['fullName']?.toString() ?? '';
+
+        _profilePictureUrl = ProfileApiConfig.getImageUrl(
+          data['profilePictureUrl'],
+        );
+      });
+    } catch (e) {
+      debugPrint('Fetch profile error: $e');
+
+      if (!mounted) return;
+
+      setState(() {
+        _errorMessage = e.toString().replaceFirst('Exception: ', '');
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _openPersonalInformation() async {
+    await Get.to(() => const ProfileInformationView());
+
+    if (mounted) {
+      await fetchProfile();
+    }
+  }
+
+  Future<void> _logout() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.remove('token');
+    await prefs.remove('authToken');
+    await prefs.remove('accessToken');
+    await prefs.remove('username');
+
+    if (!mounted) return;
+
+    Get.offAll(() => LoginScreenView());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +276,11 @@ class _ProfileScreenViewState extends State<ProfileScreenView> {
         elevation: 0,
         title: const Row(
           children: [
-            Icon(Icons.account_balance, color: Color(0xFF0F172A), size: 22),
+            Icon(
+              Icons.account_balance,
+              color: Color(0xFF0F172A),
+              size: 22,
+            ),
             SizedBox(width: 10),
             Text(
               'FinanceCore',
@@ -66,216 +318,207 @@ class _ProfileScreenViewState extends State<ProfileScreenView> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 1. Refined Profile Header Card
-            _buildProfileHeader(),
-            const SizedBox(height: 28),
-
-            // 2. Account Section
-            _buildSectionTitle('Account'),
-            _buildCardGroup([
-              _buildMenuTile(
-                icon: Icons.person_outline_rounded,
-                title: 'Personal Information',
-
-                subtitle: 'Update your details and personal data',
-                onTap: () {
-                 Get.to(()=> ProfileInformationView());
-                },
-              ),
-              _buildCustomDivider(),
-              _buildMenuTile(
-                icon: Icons.location_on_outlined,
-                title: 'Shipping Addresses',
-                subtitle: 'Manage your saved delivery locations',
-                onTap: () {},
-              ),
-            ]),
-            const SizedBox(height: 22),
-
-            // 3. Payments Section
-            _buildSectionTitle('Payments'),
-            _buildCardGroup([
-              _buildMenuTile(
-                icon: Icons.credit_card_rounded,
-                title: 'Saved Cards',
-                subtitle: 'Visa ending in €342, Mastercard in R990',
-                onTap: () {},
-              ),
-              _buildCustomDivider(),
-              _buildMenuTile(
-                icon: Icons.account_balance_outlined,
-                title: 'Bank Accounts',
-                subtitle: 'Connect new accounts for direct transfers',
-                onTap: () {},
-              ),
-            ]),
-            const SizedBox(height: 22),
-
-            // 4. Security Section
-            _buildSectionTitle('Security'),
-            _buildCardGroup([
-              _buildMenuTile(
-                icon: Icons.lock_outline_rounded,
-                title: 'Change Password',
-                subtitle: 'Last updated 3 months ago',
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => EmailInputView(),
-                    ),
-                  );
-                },
-              ),
-              _buildCustomDivider(),
-              ListTile(
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 4,
-                ),
-                leading: _buildIconBox(Icons.fingerprint_rounded),
-                title: const Text(
-                  'Biometric Login',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                    color: Color(0xFF0F172A),
+      body: RefreshIndicator(
+        onRefresh: fetchProfile,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(
+            parent: BouncingScrollPhysics(),
+          ),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 18,
+            vertical: 12,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (_isLoading && _fullName.isEmpty)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 24),
+                  child: Center(
+                    child: CircularProgressIndicator(),
                   ),
+                )
+              else if (_errorMessage != null && _fullName.isEmpty)
+                _buildErrorCard()
+              else
+                _buildProfileHeader(),
+
+              const SizedBox(height: 28),
+
+              _buildSectionTitle('Account'),
+              _buildCardGroup([
+                _buildMenuTile(
+                  icon: Icons.person_outline_rounded,
+                  title: 'Personal Information',
+                  subtitle: 'Update your details and personal data',
+                  onTap: _openPersonalInformation,
                 ),
-                subtitle: const Text(
-                  'Face ID or Touch ID enabled',
-                  style: TextStyle(fontSize: 12, color: Color(0xFF64748B)),
+                _buildCustomDivider(),
+                _buildMenuTile(
+                  icon: Icons.location_on_outlined,
+                  title: 'Shipping Addresses',
+                  subtitle: 'Manage your saved delivery locations',
+                  onTap: () {},
                 ),
-                trailing: Switch.adaptive(
-                  value: _biometricEnabled,
-                  activeColor: const Color(0xFF22C55E),
-                  onChanged: (val) {
-                    setState(() => _biometricEnabled = val);
+              ]),
+
+              const SizedBox(height: 22),
+
+              _buildSectionTitle('Payments'),
+              _buildCardGroup([
+                _buildMenuTile(
+                  icon: Icons.credit_card_rounded,
+                  title: 'Saved Cards',
+                  subtitle: 'Manage your saved payment cards',
+                  onTap: () {},
+                ),
+                _buildCustomDivider(),
+                _buildMenuTile(
+                  icon: Icons.account_balance_outlined,
+                  title: 'Bank Accounts',
+                  subtitle: 'Connect accounts for direct transfers',
+                  onTap: () {},
+                ),
+              ]),
+
+              const SizedBox(height: 22),
+
+              _buildSectionTitle('Security'),
+              _buildCardGroup([
+                _buildMenuTile(
+                  icon: Icons.lock_outline_rounded,
+                  title: 'Change Password',
+                  subtitle: 'Update your account password',
+                  onTap: () {
+                    Get.to(() => EmailInputView());
                   },
                 ),
-              ),
-            ]),
-            const SizedBox(height: 22),
+                _buildCustomDivider(),
+                ListTile(
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 4,
+                  ),
+                  leading: _buildIconBox(
+                    Icons.fingerprint_rounded,
+                  ),
+                  title: const Text(
+                    'Biometric Login',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                      color: Color(0xFF0F172A),
+                    ),
+                  ),
+                  subtitle: const Text(
+                    'Face ID or Touch ID',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Color(0xFF64748B),
+                    ),
+                  ),
+                  trailing: Switch.adaptive(
+                    value: _biometricEnabled,
+                    activeColor: const Color(0xFF22C55E),
+                    onChanged: (value) {
+                      setState(() {
+                        _biometricEnabled = value;
+                      });
+                    },
+                  ),
+                ),
+              ]),
 
-            // 5. Preferences Section
-            _buildSectionTitle('Preferences'),
-            _buildCardGroup([
-              _buildMenuTile(
-                icon: Icons.language_rounded,
-                title: 'Language',
-                subtitle: 'English (United States)',
-                onTap: () {},
-              ),
-              _buildCustomDivider(),
-              _buildMenuTile(
-                icon: Icons.notifications_none_rounded,
-                title: 'Notifications',
-                subtitle: 'Manage push and email alerts',
-                onTap: () {},
-              ),
-            ]),
-            const SizedBox(height: 30),
+              const SizedBox(height: 22),
 
-            // 6. Modern Red Gradient Log Out Button
-            _buildLogOutButton(),
-            const SizedBox(height: 28),
-          ],
+              _buildSectionTitle('Preferences'),
+              _buildCardGroup([
+                _buildMenuTile(
+                  icon: Icons.language_rounded,
+                  title: 'Language',
+                  subtitle: 'English (United States)',
+                  onTap: () {},
+                ),
+                _buildCustomDivider(),
+                _buildMenuTile(
+                  icon: Icons.notifications_none_rounded,
+                  title: 'Notifications',
+                  subtitle: 'Manage notification preferences',
+                  onTap: () {},
+                ),
+              ]),
+
+              const SizedBox(height: 30),
+
+              _buildLogOutButton(),
+
+              const SizedBox(height: 28),
+            ],
+          ),
         ),
       ),
-
-      // 7. Enhanced Bottom Navigation Bar
-      // bottomNavigationBar: Container(
-      //   decoration: BoxDecoration(
-      //     color: Colors.white,
-      //     boxShadow: [
-      //       BoxShadow(
-      //         color: Colors.black.withOpacity(0.06),
-      //         blurRadius: 20,
-      //         offset: const Offset(0, -4),
-      //       ),
-      //     ],
-      //   ),
-      //   child: BottomNavigationBar(
-      //     currentIndex: _currentIndex,
-      //     onTap: (index) => setState(() => _currentIndex = index),
-      //     type: BottomNavigationBarType.fixed,
-      //     backgroundColor: Colors.white,
-      //     elevation: 0,
-      //     selectedItemColor: const Color(0xFF0369A1),
-      //     unselectedItemColor: const Color(0xFF94A3B8),
-      //     selectedLabelStyle: const TextStyle(
-      //       fontWeight: FontWeight.w600,
-      //       fontSize: 11,
-      //     ),
-      //     unselectedLabelStyle: const TextStyle(
-      //       fontWeight: FontWeight.w500,
-      //       fontSize: 11,
-      //     ),
-      //     items: [
-      //       const BottomNavigationBarItem(
-      //         icon: Icon(Icons.home_outlined),
-      //         activeIcon: Icon(Icons.home_rounded),
-      //         label: 'Home',
-      //       ),
-      //       const BottomNavigationBarItem(
-      //         icon: Icon(Icons.grid_view_outlined),
-      //         activeIcon: Icon(Icons.grid_view_rounded),
-      //         label: 'Categories',
-      //       ),
-      //       const BottomNavigationBarItem(
-      //         icon: Icon(Icons.shopping_cart_outlined),
-      //         activeIcon: Icon(Icons.shopping_cart_rounded),
-      //         label: 'Cart',
-      //       ),
-      //       const BottomNavigationBarItem(
-      //         icon: Icon(Icons.receipt_long_outlined),
-      //         activeIcon: Icon(Icons.receipt_long_rounded),
-      //         label: 'Orders',
-      //       ),
-      //       BottomNavigationBarItem(
-      //         icon: Container(
-      //           padding: const EdgeInsets.all(8),
-      //           decoration: BoxDecoration(
-      //             gradient: const LinearGradient(
-      //               colors: [Color(0xFF0369A1), Color(0xFF0F172A)],
-      //             ),
-      //             shape: BoxShape.circle,
-      //             boxShadow: [
-      //               BoxShadow(
-      //                 color: const Color(0xFF0369A1).withOpacity(0.35),
-      //                 blurRadius: 8,
-      //                 offset: const Offset(0, 3),
-      //               ),
-      //             ],
-      //           ),
-      //           child: const Icon(
-      //             Icons.person_rounded,
-      //             color: Colors.white,
-      //             size: 18,
-      //           ),
-      //         ),
-      //         label: 'Profile',
-      //       ),
-      //     ],
-      //   ),
-      // ),
     );
   }
 
-  // Header Component with Glowing Ring & Gradient Background
+  Widget _buildErrorCard() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        children: [
+          const Icon(
+            Icons.cloud_off_outlined,
+            size: 42,
+            color: Color(0xFF64748B),
+          ),
+          const SizedBox(height: 12),
+          const Text(
+            'Could not load your profile',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF0F172A),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            _errorMessage ?? 'Please try again.',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 13,
+              color: Color(0xFF64748B),
+            ),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton.icon(
+            onPressed: fetchProfile,
+            icon: const Icon(Icons.refresh),
+            label: const Text('Try Again'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Profile header displays only the user's photo and full name.
   Widget _buildProfileHeader() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 20),
+      padding: const EdgeInsets.symmetric(
+        vertical: 28,
+        horizontal: 20,
+      ),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFF0284C7), Color(0xFF0369A1), Color(0xFF0F172A)],
+          colors: [
+            Color(0xFF0284C7),
+            Color(0xFF0369A1),
+            Color(0xFF0F172A),
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -293,7 +536,6 @@ class _ProfileScreenViewState extends State<ProfileScreenView> {
           Stack(
             alignment: Alignment.center,
             children: [
-              // Outer Glowing Aura Ring
               Container(
                 width: 96,
                 height: 96,
@@ -316,88 +558,69 @@ class _ProfileScreenViewState extends State<ProfileScreenView> {
                   ],
                 ),
               ),
-              const CircleAvatar(
-                radius: 44,
-                backgroundImage: NetworkImage(
-                  'https://i.pravatar.cc/150?img=47',
+              Container(
+                width: 88,
+                height: 88,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFE0F2FE),
+                  shape: BoxShape.circle,
                 ),
-              ),
-              Positioned(
-                bottom: 2,
-                right: 2,
-                child: Container(
-                  padding: const EdgeInsets.all(3),
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF0F172A),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.check_circle_rounded,
-                    color: Color(0xFF38BDF8),
-                    size: 20,
-                  ),
+                child: ClipOval(
+                  child: _profilePictureUrl != null
+                      ? Image.network(
+                          _profilePictureUrl!,
+                          width: 88,
+                          height: 88,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) {
+                            return const Icon(
+                              Icons.person,
+                              size: 48,
+                              color: Color(0xFF0369A1),
+                            );
+                          },
+                        )
+                      : const Icon(
+                          Icons.person,
+                          size: 48,
+                          color: Color(0xFF0369A1),
+                        ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 14),
-          const Text(
-            'Alexander Sterling',
-            style: TextStyle(
+          Text(
+            _fullName.isNotEmpty ? _fullName : 'Your Profile',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 22,
               fontWeight: FontWeight.bold,
               letterSpacing: -0.5,
             ),
           ),
-          const SizedBox(height: 4),
-          Text(
-            'Member since October 2021',
-            style: TextStyle(
-              color: Colors.white.withOpacity(0.75),
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
           const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _buildBadge('Premium Member'),
-              const SizedBox(width: 10),
-              _buildBadge('ID Verified'),
-            ],
-          ),
+          if (_isLoading)
+            const SizedBox(
+              width: 18,
+              height: 18,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: Colors.white,
+              ),
+            )
         ],
       ),
     );
   }
 
-  // Translucent Glassmorphic Badge Component
-  Widget _buildBadge(String label) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.12),
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: Colors.white.withOpacity(0.25), width: 1),
-      ),
-      child: Text(
-        label,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.2,
-        ),
-      ),
-    );
-  }
-
-  // Helper Methods for UI Construction
   Widget _buildSectionTitle(String title) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10.0, left: 4.0),
+      padding: const EdgeInsets.only(
+        bottom: 10,
+        left: 4,
+      ),
       child: Text(
         title,
         style: const TextStyle(
@@ -435,7 +658,10 @@ class _ProfileScreenViewState extends State<ProfileScreenView> {
   }) {
     return ListTile(
       onTap: onTap,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 4,
+      ),
       leading: _buildIconBox(icon),
       title: Text(
         title,
@@ -447,7 +673,10 @@ class _ProfileScreenViewState extends State<ProfileScreenView> {
       ),
       subtitle: Text(
         subtitle,
-        style: const TextStyle(fontSize: 12, color: Color(0xFF64748B)),
+        style: const TextStyle(
+          fontSize: 12,
+          color: Color(0xFF64748B),
+        ),
       ),
       trailing: const Icon(
         Icons.chevron_right_rounded,
@@ -464,17 +693,21 @@ class _ProfileScreenViewState extends State<ProfileScreenView> {
         color: const Color(0xFFE0F2FE),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Icon(icon, color: const Color(0xFF0369A1), size: 20),
+      child: Icon(
+        icon,
+        color: const Color(0xFF0369A1),
+        size: 20,
+      ),
     );
   }
 
   Widget _buildCustomDivider() {
-    return Divider(
+    return const Divider(
       height: 1,
       thickness: 1,
       indent: 64,
       endIndent: 16,
-      color: const Color(0xFFF1F5F9),
+      color: Color(0xFFF1F5F9),
     );
   }
 
@@ -484,7 +717,10 @@ class _ProfileScreenViewState extends State<ProfileScreenView> {
       height: 52,
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFFEF4444), Color(0xFFB91C1C)],
+          colors: [
+            Color(0xFFEF4444),
+            Color(0xFFB91C1C),
+          ],
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
         ),
@@ -501,13 +737,15 @@ class _ProfileScreenViewState extends State<ProfileScreenView> {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(30),
-          onTap: () {
-            Get.offAll(() => LoginScreenView());
-          },
+          onTap: _logout,
           child: const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.logout_rounded, color: Colors.white, size: 18),
+              Icon(
+                Icons.logout_rounded,
+                color: Colors.white,
+                size: 18,
+              ),
               SizedBox(width: 8),
               Text(
                 'Log Out',

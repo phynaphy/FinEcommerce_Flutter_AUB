@@ -1,14 +1,18 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_ecommerce/screen/category/category_controller.dart';
-import 'package:flutter_application_ecommerce/screen/category/category_view.dart' hide CategoryController, CategoryItem;
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_instance/src/extension_instance.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:flutter_application_ecommerce/screen/category/category_view.dart'
+    hide CategoryController, CategoryItem;
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class CategoriesScreen extends StatelessWidget {
   CategoriesScreen({super.key});
 
-  final CategoryController controller = Get.put(CategoryController());
+  final CategoryController controller =
+      Get.isRegistered<CategoryController>()
+          ? Get.find<CategoryController>()
+          : Get.put(CategoryController());
 
   final List<FeaturedCategory> featuredCategories = [
     FeaturedCategory(
@@ -53,12 +57,31 @@ class CategoriesScreen extends StatelessWidget {
     Color(0xFFE3F3FA),
   ];
 
+  static const Color backgroundColor = Color(0xFFF7F9FC);
+  static const Color headingColor = Color(0xFF101B3A);
+  static const Color textColor = Color(0xFF14213D);
+  static const Color primaryBlue = Color(0xFF145CE6);
+
+  TextStyle _textStyle({
+    double fontSize = 14,
+    FontWeight fontWeight = FontWeight.normal,
+    Color color = textColor,
+    double? letterSpacing,
+  }) {
+    return GoogleFonts.spaceGrotesk(
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      color: color,
+      letterSpacing: letterSpacing,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F9FC),
+      backgroundColor: backgroundColor,
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: controller.fetchCategories,
@@ -67,17 +90,29 @@ class CategoriesScreen extends StatelessWidget {
               parent: BouncingScrollPhysics(),
             ),
             slivers: [
-              SliverToBoxAdapter(child: _buildHeader(context)),
-              SliverToBoxAdapter(child: _buildSearchBar()),
-              SliverToBoxAdapter(child: _buildFeaturedHeader()),
+              SliverToBoxAdapter(
+                child: _buildHeader(context),
+              ),
+              SliverToBoxAdapter(
+                child: _buildSearchBar(),
+              ),
+              SliverToBoxAdapter(
+                child: _buildFeaturedHeader(),
+              ),
               SliverPadding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 sliver: SliverGrid(
-                  delegate: SliverChildBuilderDelegate((context, index) {
-                    return _buildFeaturedCard(
-                        context, featuredCategories[index]);
-                  }, childCount: featuredCategories.length),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      return _buildFeaturedCard(
+                        context,
+                        featuredCategories[index],
+                      );
+                    },
+                    childCount: featuredCategories.length,
+                  ),
+                  gridDelegate:
+                      SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: size.width > 600 ? 3 : 2,
                     crossAxisSpacing: 14,
                     mainAxisSpacing: 14,
@@ -85,25 +120,34 @@ class CategoriesScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              SliverToBoxAdapter(child: _buildAllCategoriesHeader()),
+              SliverToBoxAdapter(
+                child: _buildAllCategoriesHeader(),
+              ),
               Obx(() {
-                if (controller.isLoading.value) {
+                if (controller.isLoading.value &&
+                    controller.categories.isEmpty) {
                   return const SliverToBoxAdapter(
                     child: Padding(
-                      padding: EdgeInsets.all(30.0),
-                      child: Center(child: CircularProgressIndicator()),
+                      padding: EdgeInsets.all(30),
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
                     ),
                   );
                 }
 
-                if (controller.errorMessage.value.isNotEmpty) {
+                if (controller.errorMessage.value.isNotEmpty &&
+                    controller.categories.isEmpty) {
                   return SliverToBoxAdapter(
                     child: Padding(
-                      padding: const EdgeInsets.all(20.0),
+                      padding: const EdgeInsets.all(20),
                       child: Center(
                         child: Text(
                           controller.errorMessage.value,
-                          style: const TextStyle(color: Colors.red),
+                          textAlign: TextAlign.center,
+                          style: _textStyle(
+                            color: Colors.red,
+                          ),
                         ),
                       ),
                     ),
@@ -111,10 +155,17 @@ class CategoriesScreen extends StatelessWidget {
                 }
 
                 if (controller.categories.isEmpty) {
-                  return const SliverToBoxAdapter(
+                  return SliverToBoxAdapter(
                     child: Padding(
-                      padding: EdgeInsets.all(20.0),
-                      child: Center(child: Text('No categories available')),
+                      padding: const EdgeInsets.all(20),
+                      child: Center(
+                        child: Text(
+                          'No categories available',
+                          style: _textStyle(
+                            color: const Color(0xFF7B8497),
+                          ),
+                        ),
+                      ),
                     ),
                   );
                 }
@@ -122,12 +173,20 @@ class CategoriesScreen extends StatelessWidget {
                 return SliverPadding(
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                   sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate((context, index) {
-                      final category = controller.categories[index];
-                      final bgColor =
-                          cardBgColors[index % cardBgColors.length];
-                      return _buildCategoryTile(context, category, bgColor);
-                    }, childCount: controller.categories.length),
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        final category = controller.categories[index];
+                        final bgColor = cardBgColors[
+                            index % cardBgColors.length];
+
+                        return _buildCategoryTile(
+                          context,
+                          category,
+                          bgColor,
+                        );
+                      },
+                      childCount: controller.categories.length,
+                    ),
                   ),
                 );
               }),
@@ -138,6 +197,7 @@ class CategoriesScreen extends StatelessWidget {
     );
   }
 
+  // Header
   Widget _buildHeader(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
@@ -147,28 +207,39 @@ class CategoriesScreen extends StatelessWidget {
             icon: Icons.menu_rounded,
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Menu clicked')),
+                SnackBar(
+                  content: Text(
+                    'Menu clicked',
+                    style: _textStyle(color: Colors.white),
+                  ),
+                ),
               );
             },
           ),
           const SizedBox(width: 16),
-          const Expanded(
+          Expanded(
             child: Text(
               'Categories',
-              style: TextStyle(
+              style: _textStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.w800,
-                color: Color(0xFF101B3A),
+                color: headingColor,
                 letterSpacing: -0.7,
               ),
             ),
           ),
-          _iconButton(icon: Icons.search_rounded, onTap: () {}),
+          _iconButton(
+            icon: Icons.search_rounded,
+            onTap: () {},
+          ),
           const SizedBox(width: 8),
           Stack(
             clipBehavior: Clip.none,
             children: [
-              _iconButton(icon: Icons.shopping_cart_outlined, onTap: () {}),
+              _iconButton(
+                icon: Icons.shopping_cart_outlined,
+                onTap: () {},
+              ),
               Positioned(
                 right: -2,
                 top: -3,
@@ -179,13 +250,13 @@ class CategoriesScreen extends StatelessWidget {
                     color: Color(0xFFEF4444),
                     shape: BoxShape.circle,
                   ),
-                  child: const Center(
+                  child: Center(
                     child: Text(
                       '3',
-                      style: TextStyle(
-                        color: Colors.white,
+                      style: _textStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.w800,
+                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -198,7 +269,10 @@ class CategoriesScreen extends StatelessWidget {
     );
   }
 
-  Widget _iconButton({required IconData icon, required VoidCallback onTap}) {
+  Widget _iconButton({
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -218,12 +292,17 @@ class CategoriesScreen extends StatelessWidget {
               ),
             ],
           ),
-          child: Icon(icon, size: 24, color: const Color(0xFF1A2747)),
+          child: Icon(
+            icon,
+            size: 24,
+            color: const Color(0xFF1A2747),
+          ),
         ),
       ),
     );
   }
 
+  // Search
   Widget _buildSearchBar() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
@@ -243,17 +322,25 @@ class CategoriesScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              child: const TextField(
+              child: TextField(
+                style: _textStyle(
+                  fontSize: 14,
+                  color: textColor,
+                ),
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: 'Search products in categories...',
-                  hintStyle:
-                      TextStyle(color: Color(0xFF8A94A8), fontSize: 14),
-                  prefixIcon: Icon(
+                  hintStyle: _textStyle(
+                    fontSize: 14,
+                    color: const Color(0xFF8A94A8),
+                  ),
+                  prefixIcon: const Icon(
                     Icons.search_rounded,
                     color: Color(0xFF69758B),
                   ),
-                  contentPadding: EdgeInsets.symmetric(vertical: 18),
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 18,
+                  ),
                 ),
               ),
             ),
@@ -275,7 +362,10 @@ class CategoriesScreen extends StatelessWidget {
             ),
             child: IconButton(
               onPressed: () {},
-              icon: const Icon(Icons.tune_rounded, color: Color(0xFF273653)),
+              icon: const Icon(
+                Icons.tune_rounded,
+                color: Color(0xFF273653),
+              ),
             ),
           ),
         ],
@@ -283,29 +373,30 @@ class CategoriesScreen extends StatelessWidget {
     );
   }
 
+  // Featured heading
   Widget _buildFeaturedHeader() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 14),
       child: Row(
         children: [
-          const Expanded(
+          Expanded(
             child: Text(
               'Featured Collections',
-              style: TextStyle(
+              style: _textStyle(
                 fontSize: 21,
                 fontWeight: FontWeight.w800,
-                color: Color(0xFF101B3A),
+                color: headingColor,
               ),
             ),
           ),
           GestureDetector(
             onTap: () {},
-            child: const Text(
+            child: Text(
               'View All',
-              style: TextStyle(
-                color: Color(0xFF145CE6),
+              style: _textStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
+                color: primaryBlue,
               ),
             ),
           ),
@@ -314,10 +405,17 @@ class CategoriesScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildFeaturedCard(BuildContext context, FeaturedCategory category) {
+  // Featured cards
+  Widget _buildFeaturedCard(
+    BuildContext context,
+    FeaturedCategory category,
+  ) {
     return GestureDetector(
-      onTap: () =>
-          _openCategory(context, categoryId: 1, categoryName: category.title),
+      onTap: () => _openCategory(
+        context,
+        categoryId: 1,
+        categoryName: category.title,
+      ),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
@@ -380,7 +478,11 @@ class CategoriesScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: Icon(category.icon, color: Colors.white, size: 21),
+                  child: Icon(
+                    category.icon,
+                    color: Colors.white,
+                    size: 21,
+                  ),
                 ),
               ),
               Positioned(
@@ -394,10 +496,10 @@ class CategoriesScreen extends StatelessWidget {
                       category.title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: _textStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w800,
+                        color: Colors.white,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -405,10 +507,10 @@ class CategoriesScreen extends StatelessWidget {
                       category.subtitle,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.9),
+                      style: _textStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w500,
+                        color: Colors.white.withOpacity(0.9),
                       ),
                     ),
                   ],
@@ -421,22 +523,27 @@ class CategoriesScreen extends StatelessWidget {
     );
   }
 
+  // All Categories heading
   Widget _buildAllCategoriesHeader() {
-    return const Padding(
-      padding: EdgeInsets.fromLTRB(20, 30, 20, 14),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 30, 20, 14),
       child: Text(
         'All Categories',
-        style: TextStyle(
+        style: _textStyle(
           fontSize: 21,
           fontWeight: FontWeight.w800,
-          color: Color(0xFF101B3A),
+          color: headingColor,
         ),
       ),
     );
   }
 
+  // Dynamic category tile
   Widget _buildCategoryTile(
-      BuildContext context, CategoryItem category, Color bgColor) {
+    BuildContext context,
+    CategoryItem category,
+    Color bgColor,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
@@ -473,10 +580,12 @@ class CategoriesScreen extends StatelessWidget {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child: category.mainImageUrl != null &&
-                            category.mainImageUrl!.isNotEmpty
+                    child: category.imageUrl != null &&
+                            category.imageUrl!.isNotEmpty
                         ? Image.network(
-                            category.mainImageUrl!,
+                            category.imageUrl!.startsWith('http')
+                                ? category.imageUrl!
+                                : 'http://10.0.2.2:8080${category.imageUrl!}',
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) {
                               return const Icon(
@@ -487,7 +596,7 @@ class CategoriesScreen extends StatelessWidget {
                           )
                         : const Icon(
                             Icons.category_rounded,
-                            color: Color(0xFF14213D),
+                            color: textColor,
                           ),
                   ),
                 ),
@@ -498,19 +607,19 @@ class CategoriesScreen extends StatelessWidget {
                     children: [
                       Text(
                         category.name,
-                        style: const TextStyle(
+                        style: _textStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
-                          color: Color(0xFF14213D),
+                          color: textColor,
                         ),
                       ),
                       const SizedBox(height: 5),
                       Text(
                         '${category.totalProducts} Products',
-                        style: const TextStyle(
+                        style: _textStyle(
                           fontSize: 12,
-                          color: Color(0xFF7B8497),
                           fontWeight: FontWeight.w500,
+                          color: const Color(0xFF7B8497),
                         ),
                       ),
                     ],
@@ -537,6 +646,7 @@ class CategoriesScreen extends StatelessWidget {
     );
   }
 
+  // Open category products
   void _openCategory(
     BuildContext context, {
     required int categoryId,

@@ -15,4 +15,8 @@ abstract class AppRoutes {
   static const Category = '/category_product_screen';
   static const Category_all_product = '/category_allprodyct'; 
   static const Product_detail_view = '/product_detail_view';
+  static const Card_Screen_View = '/card_screen_view';
+  static const payment_screenview = '/payment_screen_view';
+  static const feature_collection = '/Feature_Collection';
+  
 }

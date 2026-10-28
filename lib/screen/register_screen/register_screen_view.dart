@@ -1,10 +1,13 @@
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_ecommerce/color/Premium_fintech_color.dart';
 import 'package:flutter_application_ecommerce/screen/Textfield/custom_textfield.dart';
 import 'package:flutter_application_ecommerce/screen/login_screen/login_screen_view.dart';
 import 'package:flutter_application_ecommerce/screen/register_screen/register_screen_controller.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 
 class RegisterScreenView extends StatefulWidget {
   const RegisterScreenView({super.key});
@@ -15,7 +18,172 @@ class RegisterScreenView extends StatefulWidget {
 
 class _RegisterScreenViewState extends State<RegisterScreenView> {
   final RegisterScreenController controller = RegisterScreenController();
+
+  // Username is managed directly in this file.
+  final TextEditingController usernameController = TextEditingController();
+
   bool isTermsAccepted = false;
+  bool isLoading = false;
+
+  // Android emulator uses 10.0.2.2.
+  // Flutter Web and Windows desktop use localhost.
+  String get baseUrl {
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+      return 'http://192.168.56.1:8080';
+    }
+    return 'http://192.168.56.1:8080';
+  }
+
+  Future<void> register() async {
+    final username = usernameController.text.trim();
+    final fullName = controller.fullnameController.text.trim();
+    final email = controller.emailController.text.trim();
+    final phoneNumber = controller.phoneNumberController.text.trim();
+    final password = controller.passwordController.text;
+    final confirmPassword = controller.comfirmpassController.text;
+
+    // Validate required fields.
+    if (username.isEmpty ||
+        fullName.isEmpty ||
+        email.isEmpty ||
+        phoneNumber.isEmpty ||
+        password.isEmpty ||
+        confirmPassword.isEmpty) {
+      Get.snackbar(
+        'Required Fields',
+        'Please fill in all fields.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    if (!GetUtils.isEmail(email)) {
+      Get.snackbar(
+        'Invalid Email',
+        'Please enter a valid email address.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    if (password.length < 8) {
+      Get.snackbar(
+        'Invalid Password',
+        'Password must contain at least 8 characters.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    if (password != confirmPassword) {
+      Get.snackbar(
+        'Password Mismatch',
+        'Password and confirm password do not match.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    if (!isTermsAccepted) {
+      Get.snackbar(
+        'Terms Required',
+        'Please accept the Terms of Service and Privacy Policy.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final uri = Uri.parse('$baseUrl/api/v1/mobile/auth/register');
+
+      final response = await http
+          .post(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+            },
+            body: jsonEncode({
+              'username': username,
+              'email': email,
+              'password': password,
+              'confirmPassword': confirmPassword,
+              'fullName': fullName,
+              'phoneNumber': phoneNumber,
+            }),
+          )
+          .timeout(const Duration(seconds: 30));
+
+      dynamic responseData;
+      try {
+        responseData = jsonDecode(response.body);
+      } catch (_) {
+        responseData = null;
+      }
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        if (!mounted) return;
+
+        Get.snackbar(
+          'Success',
+          responseData is Map
+              ? (responseData['message']?.toString() ??
+                  'Account created successfully.')
+              : 'Account created successfully.',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+
+        Get.off(() => LoginScreenView());
+      } else {
+        String errorMessage = 'Registration failed. Please try again.';
+
+        if (responseData is Map) {
+          errorMessage =
+              responseData['message']?.toString() ??
+              responseData['error']?.toString() ??
+              errorMessage;
+        } else if (response.body.isNotEmpty) {
+          errorMessage = response.body;
+        }
+
+        Get.snackbar(
+          'Registration Failed (${response.statusCode})',
+          errorMessage,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 5),
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Connection Error',
+        'Could not connect to the server. Check that your backend is running.\n$e',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 5),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    usernameController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,8 +193,8 @@ class _RegisterScreenViewState extends State<RegisterScreenView> {
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(
-              horizontal: 16.0,
-              vertical: 12.0,
+              horizontal: 16,
+              vertical: 12,
             ),
             child: Column(
               children: [
@@ -47,7 +215,7 @@ class _RegisterScreenViewState extends State<RegisterScreenView> {
                     Row(
                       children: [
                         Text(
-                          "FinEcommerce",
+                          'FinEcommerce',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
@@ -63,7 +231,7 @@ class _RegisterScreenViewState extends State<RegisterScreenView> {
                       ],
                     ),
                     const Text(
-                      "Secure\nSetup",
+                      'Secure\nSetup',
                       textAlign: TextAlign.right,
                       style: TextStyle(
                         fontSize: 11,
@@ -76,13 +244,12 @@ class _RegisterScreenViewState extends State<RegisterScreenView> {
                 const SizedBox(height: 20),
 
                 Container(
-                  padding: const EdgeInsets.all(20.0),
+                  padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
                       color: const Color(0xFFE2E8F0),
-                      width: 1,
                     ),
                     boxShadow: [
                       BoxShadow(
@@ -95,9 +262,8 @@ class _RegisterScreenViewState extends State<RegisterScreenView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Title & Subtitle
                       const Text(
-                        "CREATE ACCOUNT",
+                        'CREATE ACCOUNT',
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -106,7 +272,7 @@ class _RegisterScreenViewState extends State<RegisterScreenView> {
                       ),
                       const SizedBox(height: 4),
                       const Text(
-                        "Please fill in your details to get started.",
+                        'Please fill in your details to get started.',
                         style: TextStyle(
                           fontSize: 14,
                           color: PremiumFintechColor.primaryColor,
@@ -114,10 +280,22 @@ class _RegisterScreenViewState extends State<RegisterScreenView> {
                       ),
                       const SizedBox(height: 20),
 
-                      _buildFieldLabel("Full Name"),
+                      _buildFieldLabel('Username'),
+                      CustomTextField(
+                        controller: usernameController,
+                        hintText: 'Please enter username',
+                        prefixIcon: const Icon(
+                          Icons.account_circle_outlined,
+                          size: 20,
+                          color: PremiumFintechColor.primaryColor,
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+
+                      _buildFieldLabel('Full Name'),
                       CustomTextField(
                         controller: controller.fullnameController,
-                        hintText: "Please Input FullName",
+                        hintText: 'Please input full name',
                         prefixIcon: const Icon(
                           Icons.person_outline,
                           size: 20,
@@ -126,11 +304,10 @@ class _RegisterScreenViewState extends State<RegisterScreenView> {
                       ),
                       const SizedBox(height: 14),
 
-                      // 2. Email Address Field
-                      _buildFieldLabel("Email Address"),
+                      _buildFieldLabel('Email Address'),
                       CustomTextField(
                         controller: controller.emailController,
-                        hintText: "Please Input EmailAddress",
+                        hintText: 'Please input email address',
                         keyboardType: TextInputType.emailAddress,
                         prefixIcon: const Icon(
                           Icons.email_outlined,
@@ -140,11 +317,10 @@ class _RegisterScreenViewState extends State<RegisterScreenView> {
                       ),
                       const SizedBox(height: 14),
 
-                      // 3. Phone Number Field
-                      _buildFieldLabel("Phone Number"),
+                      _buildFieldLabel('Phone Number'),
                       CustomTextField(
                         controller: controller.phoneNumberController,
-                        hintText: "Please Enter Phone Number",
+                        hintText: 'Please enter phone number',
                         keyboardType: TextInputType.phone,
                         prefixIcon: const Icon(
                           Icons.phone_outlined,
@@ -154,11 +330,10 @@ class _RegisterScreenViewState extends State<RegisterScreenView> {
                       ),
                       const SizedBox(height: 14),
 
-                      // 4. Password Field
-                      _buildFieldLabel("Password"),
+                      _buildFieldLabel('Password'),
                       CustomTextField(
                         controller: controller.passwordController,
-                        hintText: "Please Password",
+                        hintText: 'Please enter password',
                         isObscure: controller.isObscure,
                         keyboardType: TextInputType.visiblePassword,
                         prefixIcon: const Icon(
@@ -169,7 +344,8 @@ class _RegisterScreenViewState extends State<RegisterScreenView> {
                         suffixIcon: GestureDetector(
                           onTap: () {
                             setState(() {
-                              controller.isObscure = !controller.isObscure;
+                              controller.isObscure =
+                                  !controller.isObscure;
                             });
                           },
                           child: Icon(
@@ -183,7 +359,7 @@ class _RegisterScreenViewState extends State<RegisterScreenView> {
                       ),
                       const SizedBox(height: 4),
                       const Text(
-                        "Must be at least 8 characters with a symbol.",
+                        'Must be at least 8 characters.',
                         style: TextStyle(
                           fontSize: 13,
                           color: Color(0xFF94A3B8),
@@ -191,11 +367,10 @@ class _RegisterScreenViewState extends State<RegisterScreenView> {
                       ),
                       const SizedBox(height: 14),
 
-                      // 5. Confirm Password Field
-                      _buildFieldLabel("Confirm Password"),
+                      _buildFieldLabel('Confirm Password'),
                       CustomTextField(
                         controller: controller.comfirmpassController,
-                        hintText: "Please Enter Comfirm Password",
+                        hintText: 'Please confirm password',
                         isObscure: controller.isObscure,
                         keyboardType: TextInputType.visiblePassword,
                         prefixIcon: const Icon(
@@ -206,7 +381,6 @@ class _RegisterScreenViewState extends State<RegisterScreenView> {
                       ),
                       const SizedBox(height: 16),
 
-                      // Terms & Conditions Checkbox
                       Row(
                         children: [
                           SizedBox(
@@ -218,9 +392,9 @@ class _RegisterScreenViewState extends State<RegisterScreenView> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(4),
                               ),
-                              onChanged: (val) {
+                              onChanged: (value) {
                                 setState(() {
-                                  isTermsAccepted = val ?? false;
+                                  isTermsAccepted = value ?? false;
                                 });
                               },
                             ),
@@ -234,23 +408,25 @@ class _RegisterScreenViewState extends State<RegisterScreenView> {
                                   color: Color(0xFF475569),
                                 ),
                                 children: [
-                                  const TextSpan(text: "I agree to the "),
+                                  const TextSpan(
+                                    text: 'I agree to the ',
+                                  ),
                                   TextSpan(
-                                    text: "Terms of Service",
+                                    text: 'Terms of Service',
                                     style: TextStyle(
                                       color: PremiumFintechColor.primaryColor,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  const TextSpan(text: " and "),
+                                  const TextSpan(text: ' and '),
                                   TextSpan(
-                                    text: "Privacy Policy",
+                                    text: 'Privacy Policy',
                                     style: TextStyle(
                                       color: PremiumFintechColor.primaryColor,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  const TextSpan(text: "."),
+                                  const TextSpan(text: '.'),
                                 ],
                               ),
                             ),
@@ -259,80 +435,93 @@ class _RegisterScreenViewState extends State<RegisterScreenView> {
                       ),
                       const SizedBox(height: 20),
 
-                      // Register Button
                       SizedBox(
                         width: double.infinity,
                         height: 48,
                         child: ElevatedButton(
-                          onPressed: () async {
-                            try {
-                              await controller.register();
-
-                              Get.snackbar(
-                                "Success",
-                                "Account created successfully",
-                              );
-                            } catch (e) {
-                              Get.snackbar("Error", e.toString());
-                            }
-                          },
+                          onPressed: isLoading ? null : register,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: PremiumFintechColor.primaryColor,
+                            backgroundColor:
+                                PremiumFintechColor.primaryColor,
                             foregroundColor: Colors.white,
+                            disabledBackgroundColor:
+                                PremiumFintechColor.primaryColor
+                                    .withOpacity(0.6),
                             elevation: 0,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              Text(
-                                "Register",
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
+                          child: isLoading
+                              ? const SizedBox(
+                                  width: 22,
+                                  height: 22,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Text(
+                                      'Register',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    SizedBox(width: 8),
+                                    Icon(
+                                      Icons.arrow_forward,
+                                      size: 18,
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              SizedBox(width: 8),
-                              Icon(Icons.arrow_forward, size: 18),
-                            ],
-                          ),
                         ),
                       ),
                       const SizedBox(height: 20),
 
-                      // Divider "OR"
                       Row(
                         children: const [
-                          Expanded(child: Divider(color: Color(0xFFE2E8F0))),
+                          Expanded(
+                            child: Divider(
+                              color: Color(0xFFE2E8F0),
+                            ),
+                          ),
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 10),
                             child: Text(
-                              "OR",
+                              'OR',
                               style: TextStyle(
                                 fontSize: 11,
                                 color: Color(0xFF94A3B8),
                               ),
                             ),
                           ),
-                          Expanded(child: Divider(color: Color(0xFFE2E8F0))),
+                          Expanded(
+                            child: Divider(
+                              color: Color(0xFFE2E8F0),
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 20),
 
-                      // Social Buttons (Google & Apple)
                       Row(
                         children: [
                           Expanded(
                             child: _buildSocialButton(
-                              label: "Google",
+                              label: 'Google',
                               icon: Image.network(
-                                "https://images.icon-icons.com/2642/PNG/512/google_logo_g_logo_icon_159348.png",
+                                'https://images.icon-icons.com/2642/PNG/512/google_logo_g_logo_icon_159348.png',
                                 height: 18,
                                 width: 18,
                                 errorBuilder: (context, error, stackTrace) =>
-                                    const Icon(Icons.g_mobiledata, size: 20),
+                                    const Icon(
+                                      Icons.g_mobiledata,
+                                      size: 20,
+                                    ),
                               ),
                               onTap: () {},
                             ),
@@ -340,7 +529,7 @@ class _RegisterScreenViewState extends State<RegisterScreenView> {
                           const SizedBox(width: 12),
                           Expanded(
                             child: _buildSocialButton(
-                              label: "Apple",
+                              label: 'Apple',
                               icon: const Icon(
                                 Icons.apple,
                                 size: 20,
@@ -353,21 +542,22 @@ class _RegisterScreenViewState extends State<RegisterScreenView> {
                       ),
                       const SizedBox(height: 20),
 
-                      // Already have an account? Login
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Text(
-                            "Already have an account? ",
+                            'Already have an account? ',
                             style: TextStyle(
                               fontSize: 13,
                               color: PremiumFintechColor.primaryColor,
                             ),
                           ),
                           GestureDetector(
-                            onTap: () {},
+                            onTap: () {
+                              Get.off(() => LoginScreenView());
+                            },
                             child: Text(
-                              "Login",
+                              'Login',
                               style: TextStyle(
                                 fontSize: 13,
                                 color: PremiumFintechColor.primaryColor,
@@ -379,7 +569,6 @@ class _RegisterScreenViewState extends State<RegisterScreenView> {
                       ),
                       const SizedBox(height: 20),
 
-                      // Bottom Security Connection Badge
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: const [
@@ -390,7 +579,7 @@ class _RegisterScreenViewState extends State<RegisterScreenView> {
                           ),
                           SizedBox(width: 4),
                           Text(
-                            "VERIFIED SECURE CONNECTION",
+                            'VERIFIED SECURE CONNECTION',
                             style: TextStyle(
                               fontSize: 10,
                               color: Color(0xFF94A3B8),
@@ -411,10 +600,9 @@ class _RegisterScreenViewState extends State<RegisterScreenView> {
     );
   }
 
-  // Label builder helper for text inputs
   Widget _buildFieldLabel(String label) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 6.0),
+      padding: const EdgeInsets.only(bottom: 6),
       child: Text(
         label,
         style: const TextStyle(
@@ -426,7 +614,6 @@ class _RegisterScreenViewState extends State<RegisterScreenView> {
     );
   }
 
-  // Social Login Button builder
   Widget _buildSocialButton({
     required String label,
     required Widget icon,
@@ -437,7 +624,9 @@ class _RegisterScreenViewState extends State<RegisterScreenView> {
       style: OutlinedButton.styleFrom(
         padding: const EdgeInsets.symmetric(vertical: 10),
         side: const BorderSide(color: Color(0xFFCBD5E1)),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,

@@ -1,9 +1,12 @@
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import 'featured_collections_controller.dart';
 import '../category/category_controller.dart';
 
-class FeaturedCollectionsView extends GetView<FeaturedCollectionsController> {
+class FeaturedCollectionsView
+    extends GetView<FeaturedCollectionsController> {
   const FeaturedCollectionsView({super.key});
 
   static const Color primaryBlue = Color(0xFF06499F);
@@ -15,10 +18,15 @@ class FeaturedCollectionsView extends GetView<FeaturedCollectionsController> {
       backgroundColor: backgroundColor,
       appBar: AppBar(
         backgroundColor: backgroundColor,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: primaryBlue, size: 22),
           onPressed: () => Get.back(),
+          icon: const Icon(
+            Icons.arrow_back_ios_new,
+            color: primaryBlue,
+            size: 21,
+          ),
         ),
         title: const Text(
           'Featured Collections',
@@ -29,75 +37,176 @@ class FeaturedCollectionsView extends GetView<FeaturedCollectionsController> {
           ),
         ),
       ),
-      body: Obx(
-        () => ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: controller.collections.length,
-          itemBuilder: (context, index) {
-            final item = controller.collections[index];
-            return _buildCollectionCard(item);
-          },
-        ),
+      body: SafeArea(
+        child: Obx(() {
+          final items = controller.collections;
+
+          if (items.isEmpty) {
+            return const Center(
+              child: Text('No featured collections available'),
+            );
+          }
+
+          return ListView.separated(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+            itemCount: items.length,
+            separatorBuilder: (_, __) =>
+                const SizedBox(height: 18),
+            itemBuilder: (context, index) {
+              final item = items[index];
+
+              return _buildCollectionCard(item);
+            },
+          );
+        }),
       ),
     );
   }
 
   Widget _buildCollectionCard(FeaturedCollection item) {
     return Container(
-      height: 150,
-      width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 16),
+      height: 200,
       decoration: BoxDecoration(
-        color: const Color(0xFFE5E7EB),
-        borderRadius: BorderRadius.circular(16),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.07),
+            blurRadius: 14,
+            offset: const Offset(0, 5),
+          ),
+        ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         child: Stack(
+          fit: StackFit.expand,
           children: [
-            Positioned.fill(
-              child: Image.network(
-                item.imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Container(
-                  color: Colors.grey[300],
-                  child: const Icon(Icons.image_not_supported, color: Colors.grey),
+            Image.network(
+              item.imageUrl,
+              key: ValueKey(
+                '${item.title}_${item.imageUrl}',
+              ),
+              fit: BoxFit.cover,
+              loadingBuilder: (context, child, progress) {
+                if (progress == null) {
+                  return child;
+                }
+
+                return Container(
+                  color: const Color(0xFFE9EEF5),
+                  alignment: Alignment.center,
+                  child: const CircularProgressIndicator(
+                    color: primaryBlue,
+                    strokeWidth: 2,
+                  ),
+                );
+              },
+              errorBuilder: (context, error, stackTrace) {
+                debugPrint(
+                  'FAILED IMAGE: ${item.imageUrl}',
+                );
+                debugPrint('ERROR: $error');
+
+                return Container(
+                  color: const Color(0xFFE9EEF5),
+                  alignment: Alignment.center,
+                  child: const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.broken_image_outlined,
+                        size: 38,
+                        color: Colors.grey,
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        'Unable to load image',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+
+            const DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    Color(0x33000000),
+                    Color(0xE6000000),
+                  ],
+                  stops: [0.2, 0.55, 1.0],
                 ),
               ),
             ),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                  colors: [
-                    Colors.black.withOpacity(0.85),
-                    Colors.transparent,
-                  ],
-                ),
-              ),
+
+            Padding(
+              padding: const EdgeInsets.all(20),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Text(
                     item.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 18,
+                      fontSize: 22,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 6),
                   Text(
                     item.subtitle,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       color: Colors.white70,
                       fontSize: 13,
+                      height: 1.4,
                     ),
                   ),
                 ],
+              ),
+            ),
+
+            Positioned(
+              top: 14,
+              right: 14,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 11,
+                  vertical: 7,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.94),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.auto_awesome,
+                      color: primaryBlue,
+                      size: 14,
+                    ),
+                    SizedBox(width: 5),
+                    Text(
+                      'Featured',
+                      style: TextStyle(
+                        color: primaryBlue,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

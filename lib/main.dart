@@ -37,7 +37,8 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: AppRoutes.splash,
+       initialRoute: AppRoutes.splash,
+      // initialRoute: AppRoutes.payment_screenview,
       getPages: AppPages.routes,
     );
   }
